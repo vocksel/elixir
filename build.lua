@@ -1,7 +1,7 @@
 
 --[[
-  This is Cure's build file. It compiles everything under the source directory
-  into a Roblox-compatible XML file that you can drag-and-drop into your game.
+  This is Elixir. It compiles everything under the source directory into a
+  ROBLOX compatible XML file that you can drag-and-drop into your game.
 
   You'll need a Lua interpreter and the LuaFileSystem module installed to run
   this file. In Windows this can be done by installing LuaForWindows[1], which
