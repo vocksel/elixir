@@ -362,8 +362,12 @@ function rbxm:createScript(className, name, source, disabled)
 end
 
 --[[
-  Lua files are checked for syntax errors. Note that a file with an error will
-  still be built regardless.
+  Lua files are checked for syntax errors.
+
+  Note:
+  - A file with an error will still be compiled regardless.
+  - It doesn't care about anything undefined. It only checks for syntax errors,
+    so you're free to use 'game' and 'workspace' in your code.
 --]]
 function rbxm:checkScriptSyntax(source)
   local func, err = loadstring(source, "")
