@@ -340,10 +340,7 @@ function rbxm:createValue(className, name, value)
 end
 
 --[[
-  Generate a new Script instance. Wrappers for this method are found below it.
-
-  The wrappers only serve to pass in the className argument for you. When using
-  one, you only need to specify name, source and disabled
+  Generate a new Script instance.
 
   @param string className  Type of script. Eg. "Script" or "LocalScript"
   @param string name       Name of the script
@@ -362,14 +359,6 @@ function rbxm:createScript(className, name, source, disabled)
   end
 
   return obj
-end
-
-function rbxm:createServerScript(...)
-  return self:createScript("Script", ...)
-end
-
-function rbxm:createLocalScript(...)
-  return self:createScript("LocalScript", ...)
 end
 
 --[[
@@ -543,9 +532,9 @@ local function handleFile(path, file)
   if extension == "lua" then
     rbxm:checkScriptSyntax(content)
     if subExtension == "script" then
-      return rbxm:createServerScript(subName, content)
+      return rbxm:createScript("Script", subName, content)
     elseif subExtension == "localscript" then
-      return rbxm:createLocalScript(subName, content)
+      return rbxm:createScript("LocalScript", subName, content)
     end
   end
 end
