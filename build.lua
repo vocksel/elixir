@@ -527,20 +527,20 @@ end
 --]]
 local function handleFile(path, file)
   local content = getFileContents(path)
-  local name, extension = splitName(file)
-  local subName, subExtension = splitName(name)
+  local baseName, ext = splitName(file)
+  local name, className = splitName(baseName)
 
-  extension = extension:lower()
-  subExtension = subExtension:lower()
+  ext = ext:lower()
+  className = className:lower()
 
-  if extension == "lua" then
+  if ext == "lua" then
     rbxm:checkScriptSyntax(content)
-    if subExtension == "script" then
-      return rbxm:createScript("Script", subName, content)
-    elseif subExtension == "local" then
-      return rbxm:createScript("LocalScript", subName, content)
-    elseif subExtension == "module" then
-      return rbxm:createScript("ModuleScript", subName, content)
+    if className == "script" then
+      return rbxm:createScript("Script", name, content)
+    elseif className == "local" then
+      return rbxm:createScript("LocalScript", name, content)
+    elseif className == "module" then
+      return rbxm:createScript("ModuleScript", name, content)
     end
   end
 end
