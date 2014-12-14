@@ -535,12 +535,12 @@ local function handleFile(path, file)
 
   if ext == "lua" then
     rbxm:checkScriptSyntax(content)
-    if className == "script" then
-      return rbxm:createScript("Script", name, content)
-    elseif className == "local" then
+    if className == "local" then
       return rbxm:createScript("LocalScript", name, content)
     elseif className == "module" then
       return rbxm:createScript("ModuleScript", name, content)
+    else
+      return rbxm:createScript("Script", name, content)
     end
   end
 end
