@@ -539,8 +539,8 @@ local function handleFile(path, file)
       return rbxm:createScript("Script", subName, content)
     elseif subExtension == "local" then
       return rbxm:createScript("LocalScript", subName, content)
-    elseif className == "module" then
-      return rbxm:createScript("ModuleScript", name, content)
+    elseif subExtension == "module" then
+      return rbxm:createScript("ModuleScript", subName, content)
     end
   end
 end
