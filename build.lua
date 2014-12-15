@@ -519,25 +519,78 @@ end
 --]]
 
 --[[
+  This function allows you to embed Roblox properties at the top of a file using
+  inline comments.
+
+  Normally when you create a file, you would include the class in the filename.
+  Something like "player-entered.script.lua". This would generate a new Script
+  named "player-entered".
+
+  Embedded properties allow you to define the Name, ClassName, and other
+  properties, at the top of the file.
+
+  If we had a file named "boring-script.module.lua" with the following contents:
+
+    -- Name: SomeCoolScript
+    -- ClassName: LocalScript
+
+    [code]
+
+  Then a LocalScript named SomeCoolScript would be created. Note that embedded
+  properties take precedence over filename properties.
+
+  @param string path Full path to the Lua file. The contents are read for
+                     embedded properties.
+
+  [1] No embedded properties were found in the file.
+--]]
+local function getEmbeddedProperties(path)
+  local props = {}
+  local pattern = "^--%s(%w+):%s(%w+)"
+  for line in io.lines(path) do
+    if not line:match("^[--]+") then
+      break
+    end
+    for k,v in line:gmatch(pattern) do
+      props[k] = v
+    end
+  end
+  if next(props) == nil then -- [1]
+    return
+  end
+  return props
+end
+
+--[[
   Run functions for specific types of files.
 
   @param string path Full path to the current file. LFS needs this to read the
                      file.
   @param string file Name and extension of the file.
+
+  [1] If the properties are not embedded we derive them from the file name.
+  [2] The class name is only used for comparisons, so we can lower-case it to
+      allow for case insensitivity when setting the class.
 --]]
 local function handleFile(path, file)
+  local props = getEmbeddedProperties(path)
   local content = getFileContents(path)
   local baseName, ext = splitName(file)
   local name, className = splitName(baseName)
 
+  if props then
+    name = props.Name or name -- [1]
+    className = props.ClassName or className -- [1]
+  end
+
   ext = ext:lower()
-  className = className:lower()
+  className = className:lower() -- [2]
 
   if ext == "lua" then
     rbxm:checkScriptSyntax(content)
-    if className == "local" then
+    if className == "localscript" or className == "local" then
       return rbxm:createScript("LocalScript", name, content)
-    elseif className == "module" then
+    elseif className == "modulescript" or className == "module" then
       return rbxm:createScript("ModuleScript", name, content)
     else
       return rbxm:createScript("Script", name, content)
