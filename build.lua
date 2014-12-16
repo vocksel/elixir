@@ -117,16 +117,7 @@ end
   ==============================================================================
 --]]
 
-local xml = {
-  -- Characters that need to be escaped before being added to the XML string.
-  escapeChars = {
-    ["\""] = "quot",
-    ["&"]  = "amp",
-    ["'"]  = "apos",
-    ["<"]  = "lt",
-    [">"]  = "gt"
-  }
-}
+local xml = {}
 
 --[[
   Create a new XML object. Each instance has a 'contents' property which
@@ -191,11 +182,18 @@ end
   in properties and scripts.
 --]]
 function xml:escape(str)
+  local escapeChars = {
+    ["\""] = "quot",
+    ["&"]  = "amp",
+    ["'"]  = "apos",
+    ["<"]  = "lt",
+    [">"]  = "gt"
+  }
   local out = ""
   for i = 1, #str do
     local char = str:sub(i,i)
-    if self.escapeChars[char] then
-      char = "&"..self.escapeChars[char]..";"
+    if escapeChars[char] then
+      char = "&"..escapeChars[char]..";"
     elseif not char:match("^[\10\13\32-\126]$") then
       char = "&#"..char:byte()..";"
     end
