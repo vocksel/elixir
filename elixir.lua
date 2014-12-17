@@ -160,8 +160,8 @@ local xml = {}
 
     local test = xml:new()
       :ln():append("<name>")
-      :ln():indent(1):append("<first>John</first>")
-      :ln():indent(1):append("<last>Smith</last>")
+      :ln():ind(1):append("<first>John</first>")
+      :ln():ind(1):append("<last>Smith</last>")
       :ln():append("</name>")
 
     -- <name>
@@ -180,10 +180,10 @@ local xml = {}
 
         local file = xml:new()
         file.indentLevel = 1
-        file:ln():indent(1):append("<Test></Test>") -- "\n\t\t<Test></Test>"
+        file:ln():ind(1):append("<Test></Test>") -- "\n\t\t<Test></Test>"
 
-      It applied two tabs because it's adding the number passed to indent() with
-      the indentLevel.
+      It applied two tabs because it's adding the number passed to ind() with th
+      indentLevel.
 --]]
 function xml:new()
   local obj = {
@@ -263,7 +263,7 @@ end
   Example:
 
     xml:new()
-      :ln():indent(1):append("<Test></Test>") -- "\n\t<Test></Test>"
+      :ln():ind(1):append("<Test></Test>") -- "\n\t<Test></Test>"
 --]]
 function xml:ln()
   self:append("\n")
@@ -277,11 +277,11 @@ end
   Example:
 
     <roblox ...>
-      <Item class="Script">                   -- xml:indent(1)
-        <Properties>                          -- xml:indent(2)
-          <string name="Name">Script</string> -- xml:indent(3)
+      <Item class="Script">                   -- xml:ind(1)
+        <Properties>                          -- xml:ind(2)
+          <string name="Name">Script</string> -- xml:ind(3)
           ...
-        </Properties>                         -- xml:indent(1)
+        </Properties>                         -- xml:ind(1)
       </Item>
     </roblox>
 
