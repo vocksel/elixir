@@ -316,23 +316,6 @@ end
 local rbxm = {}
 
 --[[
-  Create a Value instance (Int, String, Bool, etc).
-
-  @param string className  Any Roblox "Value" instance. StringValue, BoolValue,
-                           etc.
-  @param string name       Name of the Value
-  @param any    value      Depends on which instance you use. If you're using a
-                           StringValue then this must be a string.
---]]
-function rbxm:createValue(className, name, value)
-  return {
-    ClassName = className .. "Value",
-    Name = { "string", name },
-    Value = { className:lower(), value }
-  }
-end
-
---[[
   Generate a new Script instance.
 
   @param string className  Type of script. Eg. "Script" or "LocalScript"
