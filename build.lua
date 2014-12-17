@@ -16,6 +16,8 @@ if _VERSION == "Lua 5.2" then
   unpack = table.unpack
 end
 
+local elixir = {}
+
 
 
 
@@ -595,16 +597,31 @@ end
     Arguments from the command-line. Only supports one argument, which alters
     the path that the model file is built to.
 --]]
-function compile(args)
+function compile()
   local rbxmObj = recurseDir(SOURCE_DIR, {
     ClassName = CONTAINER_CLASS,
     Name = { "string", RBXM_ROOT_NAME }
   })
 
-  local rbxmPath = BUILD_DIR.."/"..(args[1] or RBXM_FILE)
+  local rbxmPath = BUILD_DIR.."/"..RBXM_FILE
 
   lfs.mkdir(BUILD_DIR)
   rbxm:save(rbxmObj, rbxmPath)
 end
 
-compile({...})
+
+
+
+
+--[[
+  Elixir
+  ==============================================================================
+--]]
+
+function elixir.elixir()
+  compile()
+end
+
+setmetatable(elixir, { __call = function(_, ...) return elixir.elixir(...) end })
+
+return elixir
