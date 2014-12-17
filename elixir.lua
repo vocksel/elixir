@@ -476,11 +476,18 @@ end
 
 
 --[[
-  Compiling
+  Compiler
   ==============================================================================
 --]]
 
-local function isNotIgnored(filename)
+local Compiler = {}; Compiler.__index = Compiler
+
+function Compiler.new(obj)
+  local obj = obj or {}
+  return setmetatable(obj, Compiler)
+end
+
+function Compiler:isNotIgnored(filename)
   if filename ~= ".." and filename ~= "." then
     for _,ignoredFile in ipairs(IGNORED) do
       if filename ~= ignoredFile then
@@ -492,7 +499,7 @@ local function isNotIgnored(filename)
 end
 
 -- Extract the contents of a file
-local function getFileContents(path)
+function Compiler:getFileContents(path)
   local file = assert(io.open(path))
   local content = file:read("*a")
   file:close()
@@ -526,7 +533,7 @@ end
 
   [1] No embedded properties were found in the file.
 --]]
-local function getEmbeddedProperties(path)
+function Compiler:getEmbeddedProperties(path)
   local props = {}
   local pattern = "^--%s(%w+):%s(%w+)"
   for line in io.lines(path) do
@@ -554,9 +561,9 @@ end
   [2] The class name is only used for comparisons, so we can lower-case it to
       allow for case insensitivity when setting the class.
 --]]
-local function handleFile(path, file)
-  local props = getEmbeddedProperties(path)
-  local content = getFileContents(path)
+function Compiler:handleFile(path, file)
+  local props = self:getEmbeddedProperties(path)
+  local content = self:getFileContents(path)
   local baseName, ext = splitName(file)
   local name, className = splitName(baseName)
 
@@ -580,10 +587,10 @@ local function handleFile(path, file)
   end
 end
 
-local function recurseDir(path, obj)
+function Compiler:recurseDir(path, obj)
   print("DIR", path)
   for name in lfs.dir(path) do
-    if isNotIgnored(name) then
+    if self:isNotIgnored(name) then
       local joined = path.."/"..name
 
       local dir = {
@@ -592,10 +599,10 @@ local function recurseDir(path, obj)
       }
 
       if isDir(joined) then
-        obj[#obj+1] = recurseDir(joined, dir, true)
+        obj[#obj+1] = self:recurseDir(joined, dir, true)
       else
         print("FILE", joined)
-        obj[#obj+1] = handleFile(joined, name)
+        obj[#obj+1] = self:handleFile(joined, name)
       end
     end
   end
@@ -605,13 +612,9 @@ end
 --[[
   Compile the directory structure and the source code into a Roblox-compatible
   file. Configure the paths and filenames at the top of this file.
-
-  @param String args
-    Arguments from the command-line. Only supports one argument, which alters
-    the path that the model file is built to.
 --]]
-function compile()
-  local rbxmObj = recurseDir(SOURCE_DIR, {
+function Compiler:compile()
+  local rbxmObj = self:recurseDir(SOURCE_DIR, {
     ClassName = CONTAINER_CLASS,
     Name = { "string", RBXM_ROOT_NAME }
   })
@@ -632,7 +635,8 @@ end
 --]]
 
 function elixir.elixir()
-  compile()
+  local file = Compiler.new()
+  file:compile()
 end
 
 setmetatable(elixir, { __call = function(_, ...) return elixir.elixir(...) end })
