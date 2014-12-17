@@ -110,17 +110,6 @@ function isDir(dir)
   return lfs.attributes(dir, "mode") == "directory"
 end
 
-local function isNotIgnored(filename)
-  if filename ~= ".." and filename ~= "." then
-    for _,ignoredFile in ipairs(IGNORED) do
-      if filename ~= ignoredFile then
-        return true
-      end
-    end
-  end
-  return false
-end
-
 local function splitName(path)
   for i = #path, 1, -1 do
     local c = path:sub(i, i)
@@ -129,15 +118,6 @@ local function splitName(path)
     end
   end
   return path, ""
-end
-
--- Extract the contents of a file
-local function getFileContents(path)
-  local file = assert(io.open(path))
-  local content = file:read("*a")
-  file:close()
-
-  return content
 end
 
 
@@ -499,6 +479,26 @@ end
   Compiling
   ==============================================================================
 --]]
+
+local function isNotIgnored(filename)
+  if filename ~= ".." and filename ~= "." then
+    for _,ignoredFile in ipairs(IGNORED) do
+      if filename ~= ignoredFile then
+        return true
+      end
+    end
+  end
+  return false
+end
+
+-- Extract the contents of a file
+local function getFileContents(path)
+  local file = assert(io.open(path))
+  local content = file:read("*a")
+  file:close()
+
+  return content
+end
 
 --[[
   This function allows you to embed Roblox properties at the top of a file using
