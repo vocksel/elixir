@@ -277,43 +277,6 @@ end
 
 
 --[[
-  Data Type Encoding
-  ==============================================================================
---]]
-
---[[
-  These methods encode Lua and Roblox data types into XML-safe strings. They are
-  run dynamically by rbxm:encodeProperty.
---]]
-
-local encode = {}
-
-
-function encode.bool(data)
-  return not not data
-end
-
-function encode.double(data)
-  string.format("%f", data)
-end
-
-function encode.int(data)
-  return string.format("%i", data)
-end
-
-function encode.string(data)
-  return xml:encodeTruncEsc(xml:escape(data))
-end
-
-function encode.ProtectedString(data)
-  return xml:encodeTruncEsc(xml:escape(data))
-end
-
-
-
-
-
---[[
   Roblox Models
   ==============================================================================
 --]]
@@ -390,18 +353,24 @@ function rbxm:referent()
 end
 
 --[[
-  Uses methods in the 'encode' object to convert Roblox properties into XML-safe
-  strings.
+  Encodes Lua and Roblox data types into XML-safe strings.
 
-  @param className The ClassName of the property. CFrame, Ray and UDim2 would
-                   all be applicable.
+  @param datatype  The ClassName of the property.
   @param value     The value to be encoded.
 --]]
-function rbxm:encodeProperty(className, value)
-  if encode[className] then
-    value = encode[className](value)
+function rbxm:encodeProperty(datatype, value)
+  if datatype == "bool" then
+    return not not value
+
+  elseif datatype == "double" then
+    return string.format("%f", value)
+
+  elseif datatype == "int" then
+    return string.format("%i", value)
+
+  elseif datatype == "string" or datatype == "ProtectedString" then
+    return xml:encodeTruncEsc(xml:escape(value))
   end
-  return value
 end
 
 --[[
