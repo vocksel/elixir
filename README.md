@@ -45,3 +45,75 @@ You can also embed the Script's properties at the top of the file in a comment. 
 Then a LocalScript named SomeCoolScript would be created. Embedding the properties keeps filenames concise while still giving the desired outcome when compiling.
 
 **Note:** Embedded properties take precedence over filename properties.
+
+## API
+
+### elixir([options])
+
+```lua
+-- No options. Uses defaults
+elixir()
+
+-- Uses different 'source' and 'build' directories
+elixir{
+  source = "src",
+  build = "dist"
+}
+```
+
+#### options
+
+- Type: `Table`
+
+All configurable values for Elixir can be modified in this table.
+
+**Note:** the locations for `options.source` and `options.build` are relative to where you call Elixir from. If you have Elixir under `project/lib/elixir`, and your build file under `project/build.lua`, then when you run the build script it will find the source folder under `project/source`.
+
+#### options.source
+
+- Type: `String`
+- Default: `source`
+
+Name of the directory that holds your source code, relative to where you call Elixir from. Automatically generated when Elixir is run, but you'll likely want to create it yourself.
+
+#### options.build
+
+- Type: `String`
+- Default: `build`
+
+Name of the directory where the model file is output. Automatically generated when Elixir is run.
+
+#### options.fileName
+
+- Type: `String`
+- Default: `elixir`
+
+Name of the file created in `options.build`. This can be anything you like, it's only the name of the file on your system. `options.modelName` controls the in-game name.
+
+#### options.fileExt
+
+- Type: `String`
+- Default: `.rbxmx`
+
+ROBLOX recognizes `rbxm` and `rbxmx` as Model files that you can drag-and-drop into Studio. `rbxm` uses Binary, while `rbxmx` uses XML. Because Elixir only compiles to XML, the `rbxmx` extension is prefered.
+
+#### options.modelName
+
+- Type: `String`
+- Default: `Elixir`
+
+Name of the top-most instance in the model file (the root). This contains all of the descendants of the compiled source directory.
+
+#### options.container
+
+- Type: `String`
+- Default: `Configuration`
+
+The ROBLOX instance that will be used to replicate the folder structure. Any instance can be used, but Configurations are recommended.
+
+#### options.ignored
+
+- Type: `Array`
+- Default: `{}`
+
+Files to skip over when compiling. Especially useful when using .gitignore to commit empty directories.
