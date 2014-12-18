@@ -4,12 +4,18 @@ Adapted from the build system used in [Cure](https://github.com/Anaminus/roblox-
 
 ROBLOX currently has no Git integration, and minimal theming options. With Elixir you can use your favorite version control system and text editor.
 
-## Setup
+## Getting Started
 
 You'll need a Lua interpreter and the LuaFileSystem module installed to run this file. In Windows this can be done by installing [LuaForWindows]( https://code.google.com/p/luaforwindows/), which comes bundled with LuaFileSystem.
 
-From there, you're all set to compile your source code:
+Once you have Lua installed, all you have to do is get a copy of Elixir and call it.
 
-```bash
-$ lua build.lua
+```lua
+-- build.lua
+
+local elixir = require "lib/elixir"
+
+elixir()
 ```
+
+It's that easy. Now you can run `lua build.lua` from the command line and all your source code will be compiled into a ROBLOX model file.
