@@ -19,3 +19,29 @@ elixir()
 ```
 
 It's that easy. Now you can run `lua build.lua` from the command line and all your source code will be compiled into a ROBLOX model file.
+
+Read on to learn how to set ROBLOX properties for your Scripts, and the different options you can configure when calling Elixir.
+
+## Script Properties
+
+ROBLOX properties for each Script are derived from the filename. `HelloWorld.local.lua` creates a LocalScript named HelloWorld, `Rainbow.module.lua` creates a ModuleScript named Rainbow, and so on.
+
+`filename.classname.lua` is the format, and these are the supported classes:
+
+- `local`
+- `module`
+
+Anything else is compiled to a Script. While not necessary, you can name your files `Something.script.lua` for consistency.
+
+You can also embed the Script's properties at the top of the file in a comment. If we had a file named `boring-script.module.lua` with the following contents:
+
+```lua
+-- Name: SomeCoolScript
+-- ClassName: LocalScript
+
+[code]
+```
+
+Then a LocalScript named SomeCoolScript would be created. Embedding the properties keeps filenames concise while still giving the desired outcome when compiling.
+
+**Note:** Embedded properties take precedence over filename properties.
