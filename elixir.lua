@@ -53,55 +53,6 @@ local elixir = {
 
 
 --[[
-  Configuration
-  ==============================================================================
---]]
-
---[[
-  An array of files to ignore when compiling the source code.
-
-  .gitignore is used extensively to allow us to commit directories. This makes
-  it easier for new users to get started, so they aren't required to create a
-  bunch of directories.
---]]
-local IGNORED = {
-  ".gitignore"
-}
-
---[[
-  Where source code is stored and compiled to, respectively.
---]]
-local SOURCE_DIR = "source"
-local BUILD_DIR  = "build"
-
---[[
-  The name and extension of the Model file that will be generated.
-
-  [1] Roblox only supports two extensions: rbxm and rbxmx. The former uses
-      binary while the latter uses XML. Because this build only compiles to
-      XML, the rbxmx file extension is prefered.
---]]
-local RBXM_FILE_NAME = "elixir"
-local RBXM_FILE_EXT  = ".rbxmx" -- [1]
-local RBXM_FILE = RBXM_FILE_NAME..RBXM_FILE_EXT
-
---[[
-  Sets the name for the top-most instance in the model file. This contains all
-  of the descendants of the source directory, once they're compiled.
---]]
-local RBXM_ROOT_NAME  = "elixir"
-
---[[
-  The instance that will be used to replicate the folder structure. Any
-  instance can be used, but Folders are recommended.
---]]
-local CONTAINER_CLASS = "Configuration"
-
-
-
-
-
---[[
   Helpers
   ==============================================================================
 --]]
@@ -489,7 +440,7 @@ end
 
 function Compiler:isNotIgnored(filename)
   if filename ~= ".." and filename ~= "." then
-    for _,ignoredFile in ipairs(IGNORED) do
+    for _,ignoredFile in ipairs(self.ignored) do
       if filename ~= ignoredFile then
         return true
       end
@@ -594,7 +545,7 @@ function Compiler:recurseDir(path, obj)
       local joined = path.."/"..name
 
       local dir = {
-        ClassName = CONTAINER_CLASS,
+        ClassName = self.container,
         Name = { "string", name }
       }
 
@@ -614,14 +565,14 @@ end
   file. Configure the paths and filenames at the top of this file.
 --]]
 function Compiler:compile()
-  local rbxmObj = self:recurseDir(SOURCE_DIR, {
-    ClassName = CONTAINER_CLASS,
-    Name = { "string", RBXM_ROOT_NAME }
+  local rbxmObj = self:recurseDir(self.source, {
+    ClassName = self.container,
+    Name = { "string", self.modelName }
   })
 
-  local rbxmPath = BUILD_DIR.."/"..RBXM_FILE
+  local rbxmPath = self.build.."/"..self.fileName..self.fileExt
 
-  lfs.mkdir(BUILD_DIR)
+  lfs.mkdir(self.build)
   rbxm:save(rbxmObj, rbxmPath)
 end
 
@@ -634,8 +585,17 @@ end
   ==============================================================================
 --]]
 
-function elixir.elixir()
-  local file = Compiler.new()
+function elixir.elixir(options)
+  local options = options or {}
+  local file = Compiler.new{
+    source    = options.source    or "source",
+    build     = options.build     or "build",
+    fileName  = options.fileName  or "elixir",
+    fileExt   = options.fileExt   or ".rbxmx",
+    modelName = options.modelName or "Elixir",
+    container = options.container or "Configuration",
+    ignored   = options.ignored   or {}
+  }
   file:compile()
 end
 
