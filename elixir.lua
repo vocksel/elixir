@@ -440,11 +440,14 @@ end
 
 function Compiler:isNotIgnored(filename)
   if filename ~= ".." and filename ~= "." then
-    for _,ignoredFile in ipairs(self.ignored) do
-      if filename ~= ignoredFile then
-        return true
+    if next(self.ignored) then -- List of ignored files can be empty
+      for _,ignoredFile in ipairs(self.ignored) do
+        if filename ~= ignoredFile then
+          return true
+        end
       end
     end
+    return true
   end
   return false
 end
