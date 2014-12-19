@@ -10,12 +10,6 @@
   [1] https://code.google.com/p/luaforwindows/
 --]]
 
-local lfs = require "lfs"
-
-if _VERSION == "Lua 5.2" then
-  unpack = table.unpack
-end
-
 local elixir = {
   _VERSION = "v0.1.0",
   _URL = "https://github.com/voxeldavid/elixir",
@@ -47,6 +41,12 @@ local elixir = {
     For more information, please refer to [http://unlicense.org]
   ]]
 }
+
+local lfs = require "lfs"
+
+if _VERSION == "Lua 5.2" then
+  unpack = table.unpack
+end
 
 
 
