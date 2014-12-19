@@ -13,7 +13,7 @@ Once you have Lua installed, all you have to do is get a copy of Elixir and call
 ```lua
 -- build.lua
 
-local elixir = require "lib/elixir"
+local elixir = require "elixir/elixir"
 
 elixir()
 ```
