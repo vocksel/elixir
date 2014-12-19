@@ -498,7 +498,7 @@ function Compiler:getEmbeddedProperties(path)
       props[k] = v
     end
   end
-  if next(props) == nil then -- [1]
+  if not next(props) then -- [1]
     return
   end
   return props
