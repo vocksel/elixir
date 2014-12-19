@@ -438,16 +438,16 @@ function Compiler.new(obj)
   return setmetatable(obj, Compiler)
 end
 
-function Compiler:isNotIgnored(filename)
-  if filename ~= ".." and filename ~= "." then
-    if next(self.ignored) then -- List of ignored files can be empty
-      for _,ignoredFile in ipairs(self.ignored) do
-        if filename ~= ignoredFile then
-          return true
-        end
+function Compiler:isIgnored(filename)
+  if filename == "." or filename == ".." then
+    return true
+  end
+  if next(self.ignored) then -- List of ignored files can be empty
+    for _,ignoredFile in ipairs(self.ignored) do
+      if filename == ignoredFile then
+        return true
       end
     end
-    return true
   end
   return false
 end
@@ -544,7 +544,7 @@ end
 function Compiler:recurseDir(path, obj)
   print("DIR", path)
   for name in lfs.dir(path) do
-    if self:isNotIgnored(name) then
+    if not self:isIgnored(name) then
       local joined = path.."/"..name
 
       local dir = {
