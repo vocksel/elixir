@@ -315,7 +315,7 @@ function rbxm:encodeProperty(datatype, value)
     return string.format("%i", value)
 
   elseif datatype == "string" or datatype == "ProtectedString" then
-    return xml:encodeTruncEsc(xml:escape(value))
+    return xml:escape(value)
   end
 end
 
