@@ -97,14 +97,14 @@ Name of the file created in `options.build`. This can be anything you like, it's
 
 ROBLOX recognizes `rbxm` and `rbxmx` as Model files that you can drag-and-drop into Studio. `rbxm` uses Binary, while `rbxmx` uses XML. Because Elixir only compiles to XML, the `rbxmx` extension is prefered.
 
-#### options.modelName
+#### options.rbxName
 
 - Type: `String`
 - Default: `Elixir`
 
 Name of the top-most instance in the model file (the root). This contains all of the descendants of the compiled source directory.
 
-#### options.container
+#### options.rbxClass
 
 - Type: `String`
 - Default: `Configuration`

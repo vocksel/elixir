@@ -11,7 +11,7 @@
 --]]
 
 local elixir = {
-  _VERSION = "v0.1.0",
+  _VERSION = "v0.2.0",
   _URL = "https://github.com/voxeldavid/elixir",
   _DESCRIPTION = "Elixir is a build system for ROBLOX that compiles Lua code into an XML file",
   _LICENSE = [[
@@ -548,7 +548,7 @@ function Compiler:recurseDir(path, obj)
       local joined = path.."/"..name
 
       local dir = {
-        ClassName = self.container,
+        ClassName = self.rbxClass,
         Name = { "string", name }
       }
 
@@ -569,8 +569,8 @@ end
 --]]
 function Compiler:compile()
   local rbxmObj = self:recurseDir(self.source, {
-    ClassName = self.container,
-    Name = { "string", self.modelName }
+    ClassName = self.rbxClass,
+    Name = { "string", self.rbxName }
   })
 
   local rbxmPath = self.build.."/"..self.fileName..self.fileExt
@@ -591,13 +591,13 @@ end
 function elixir.elixir(options)
   local options = options or {}
   local file = Compiler.new{
-    source    = options.source    or "source",
-    build     = options.build     or "build",
-    fileName  = options.fileName  or "elixir",
-    fileExt   = options.fileExt   or ".rbxmx",
-    modelName = options.modelName or "Elixir",
-    container = options.container or "Configuration",
-    ignored   = options.ignored   or {}
+    source   = options.source   or "source",
+    build    = options.build    or "build",
+    fileName = options.fileName or "elixir",
+    fileExt  = options.fileExt  or ".rbxmx",
+    rbxName  = options.rbxName  or "Elixir",
+    rbxClass = options.rbxClass or "Configuration",
+    ignored  = options.ignored  or {}
   }
   file:compile()
 end
