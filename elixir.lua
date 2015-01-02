@@ -447,7 +447,7 @@ function Compiler:isIgnored(filename)
   if filename == "." or filename == ".." then
     return true
   end
-  if next(self.ignored) then -- List of ignored files can be empty
+  if self.ignored then
     for _,ignoredFile in ipairs(self.ignored) do
       if filename == ignoredFile then
         return true
@@ -595,7 +595,7 @@ function elixir.elixir(options)
     fileExt  = options.fileExt  or ".rbxmx",
     rbxName  = options.rbxName  or "Elixir",
     rbxClass = options.rbxClass or "Configuration",
-    ignored  = options.ignored  or {}
+    ignored  = options.ignored
   }
   file:compile()
 end

@@ -114,6 +114,5 @@ The ROBLOX instance that will be used to replicate the folder structure. Any ins
 #### options.ignored
 
 - Type: `Array`
-- Default: `{}`
 
 Files to skip over when compiling. Especially useful when using .gitignore to commit empty directories.
