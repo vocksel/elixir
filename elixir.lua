@@ -71,6 +71,15 @@ local function splitName(path)
   return path, ""
 end
 
+-- Extract the contents of a file
+local function getFileContents(path)
+  local file = assert(io.open(path))
+  local content = file:read("*a")
+  file:close()
+
+  return content
+end
+
 
 
 
@@ -452,15 +461,6 @@ function Compiler:isIgnored(filename)
   return false
 end
 
--- Extract the contents of a file
-function Compiler:getFileContents(path)
-  local file = assert(io.open(path))
-  local content = file:read("*a")
-  file:close()
-
-  return content
-end
-
 --[[
   This function allows you to embed Roblox properties at the top of a file using
   inline comments.
@@ -517,7 +517,7 @@ end
 --]]
 function Compiler:handleFile(path, file)
   local props = self:getEmbeddedProperties(path)
-  local content = self:getFileContents(path)
+  local content = getFileContents(path)
   local baseName, ext = splitName(file)
   local name, className = splitName(baseName)
 
