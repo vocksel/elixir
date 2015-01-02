@@ -439,6 +439,13 @@ function Compiler.new(obj)
   return setmetatable(obj, Compiler)
 end
 
+--[[
+  Skips a file when compiling if it's in the list of ignored files.
+
+  @param table list      Array containing all of the filesnames to ignore.
+  @param string filename Name of the file, not the full path. If there are any
+    slashes then you are not passing in the filename.
+--]]
 function Compiler:isIgnored(filename)
   if filename == "." or filename == ".." then
     return true
