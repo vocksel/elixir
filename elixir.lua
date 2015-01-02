@@ -402,10 +402,6 @@ end
                       into XML.
 --]]
 function rbxm:tabToStr(object)
-  if type(object) ~= "table" then
-    error("table expected", 2)
-  end
-
   local body = self:body(object)
   local file = xml:new()
   file:append("<roblox "..
@@ -421,17 +417,10 @@ end
 
 -- Saves an RBXM string or table.
 function rbxm:save(var, filename)
-  if type(var) == "table" then
-    var = self:tabToStr(var)
-  end
-  if type(var) == "string" then
-    local file = assert(io.open(filename, "w"))
-    file:write(var)
-    file:flush()
-    file:close()
-  else
-    error("bad type", 2)
-  end
+  local file = assert(io.open(filename, "w"))
+  file:write(self:tabToStr(var))
+  file:flush()
+  file:close()
 end
 
 
