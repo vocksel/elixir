@@ -109,6 +109,9 @@ local xml = {}
     --   <last>Smith</last>
     -- </name>
 
+  [1] 'contents' is where all of the XML strings are stored, before lating being
+      concatenated into a single string.
+
   [2] This value is incremented when inside of a loop to allow child elements to
       make use of the same code, while still indenting them more than the
       previous elements.
@@ -127,7 +130,7 @@ local xml = {}
 --]]
 function xml:new()
   local obj = {
-    contents = {},
+    contents = {}, -- [1]
     indentLevel = 0 -- [2]
   }
   setmetatable(obj, self)
