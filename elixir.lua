@@ -511,9 +511,11 @@ end
                      file.
   @param string file Name and extension of the file.
 
-  [1] If the properties are not embedded we derive them from the file name.
-  [2] The class name is only used for comparisons, so we can lower-case it to
-      allow for case insensitivity when setting the class.
+  [1] Only one embedded property is required, so fallbacks need to be in place
+      incase one of more properties were not filled out.
+  [2] Extension and ClassName are only used for comparison. They are set to
+      lowercase to allow for case-insensitivity when the user is setting Script
+      properties.
 --]]
 function Compiler:handleFile(path, file)
   local props = self:getEmbeddedProperties(path)
@@ -526,7 +528,7 @@ function Compiler:handleFile(path, file)
     className = props.ClassName or className -- [1]
   end
 
-  ext = ext:lower()
+  ext = ext:lower() -- [2]
   className = className:lower() -- [2]
 
   if ext == "lua" then
