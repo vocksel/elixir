@@ -367,12 +367,12 @@ function rbxm:body(object)
     local props = rbxm:getProperties(object)
 
     for i = 1, #props do
-      local name      = props[i]
-      local className = object[name][1]
-      local value     = object[name][2]
+      local name     = props[i]
+      local dataType = object[name][1]
+      local value    = object[name][2]
 
-      value = self:encodeProperty(className, value)
-      body:ln():ind(2):append(string.format("<%s name=\"%s\">%s</%s>", className, name, value, className))
+      value = self:encodeProperty(dataType, value)
+      body:ln():ind(2):append(string.format("<%s name=\"%s\">%s</%s>", dataType, name, value, dataType))
     end
   end
 
