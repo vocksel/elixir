@@ -364,15 +364,11 @@ function rbxm:body(object)
   local ref = self:referent()
 
   local function exportProperties(object)
-    local props = rbxm:getProperties(object)
-
-    for i = 1, #props do
-      local name     = props[i]
-      local dataType = object[name][1]
-      local value    = object[name][2]
-
-      value = self:encodeProperty(dataType, value)
-      body:ln():ind(2):append(string.format("<%s name=\"%s\">%s</%s>", dataType, name, value, dataType))
+    local props = self:getProperties(object)
+    for _,prop in pairs(props) do
+      local dataType = object[prop][1]
+      local value    = self:encodeProperty(dataType, object[prop][2])
+      body:ln():ind(2):append(string.format("<%s name=\"%s\">%s</%s>", dataType, prop, tostring(value), dataType))
     end
   end
 
