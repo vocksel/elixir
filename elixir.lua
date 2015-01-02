@@ -432,7 +432,8 @@ end
   ==============================================================================
 --]]
 
-local Compiler = {}; Compiler.__index = Compiler
+local Compiler = {}
+Compiler.__index = Compiler
 
 function Compiler.new(obj)
   local obj = obj or {}
