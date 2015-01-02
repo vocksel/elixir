@@ -424,6 +424,44 @@ end
 
 
 --[[
+  Engines
+  ==============================================================================
+--]]
+
+local engines = {}
+
+--[[
+ "Nevermore handles three things. Loading libraries, loading code, and loading
+  characters. To put it simply, ROBLOX's loading system when it comes to character
+  respawn and code loading is annoying to work with, so it's been rewritten.
+
+  https://github.com/Quenty/NevermoreEngine
+
+  NevermoreEngineLoader should be the only active Script in the game. It moves
+  everything around and then enables Scripts and LocalScripts to run them.
+
+  There are generally only going to be two scripts for the entire game,
+  Server.Main and Client.Main. Unless explicitely set, all .lua files will be
+  turned into ModuleScripts.
+--]]
+function engines:nevermore(baseName, className, content)
+  if baseName == "NevermoreEngineLoader" then
+    return rbxm:createScript("Script", baseName, content)
+
+  elseif className == "script" then
+    return rbxm:createScript("Script", baseName, content, true)
+
+  elseif className == "local" or className == "localscript" then
+    return rbxm:createScript("LocalScript", baseName, content, true)
+  end
+  return rbxm:createScript("ModuleScript", baseName, content)
+end
+
+
+
+
+
+--[[
   Compiler
   ==============================================================================
 --]]
@@ -501,6 +539,17 @@ function Compiler:getEmbeddedProperties(path)
 end
 
 --[[
+  Conditionally picks an Engine to use for compiling based on self.engine
+--]]
+function Compiler:useEngine(baseName, className, content)
+  local engine = self.engine:lower()
+  if engine == "nevermore" then
+    return engines:nevermore(baseName, className, content)
+  end
+  error("Unknown engine: "..self.engine, 2)
+end
+
+--[[
   Run functions for specific types of files.
 
   @param string path Full path to the current file. This is needed for
@@ -529,6 +578,11 @@ function Compiler:handleFile(path, file)
 
   if ext == "lua" then
     rbxm:checkScriptSyntax(content)
+
+    if self.engine then
+      return self:useEngine(baseName, className, content)
+    end
+
     if className == "localscript" or className == "local" then
       return rbxm:createScript("LocalScript", name, content)
     elseif className == "modulescript" or className == "module" then
@@ -595,7 +649,8 @@ function elixir.elixir(options)
     fileExt  = options.fileExt  or ".rbxmx",
     rbxName  = options.rbxName  or "Elixir",
     rbxClass = options.rbxClass or "Configuration",
-    ignored  = options.ignored
+    ignored  = options.ignored,
+    engine   = options.engine
   }
   file:compile()
 end

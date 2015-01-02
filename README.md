@@ -111,6 +111,49 @@ Name of the top-most instance in the model file (the root). This contains all of
 
 The ROBLOX instance that will be used to replicate the folder structure. Any instance can be used, but Configurations are recommended.
 
+#### options.engine
+
+- Type: `String`
+
+Engines are a way to override the default behavior of Elixir. They are generally very opinionated in how you structure your code, which is why custom methods are needed to compile everything.
+
+Applicable engines:
+
+- `Nevermore` ([link](https://github.com/Quenty/NevermoreEngine))
+
+  Simply copy the `App` and `Modules` directories from Nevermore into the source folder, deleting any of the modules that you don't require. Create a directory in `Modules` named `Game`, and add `Server.Main.lua` and `Client.Main.lua`.
+
+  Inside of the new 'Main' files, you need to add the following comments to the top of them:
+
+  *Server.Main.lua:*
+
+  ```lua
+  -- Name: Server.Main
+  -- ClassName: Script
+
+  [code]
+  ```
+
+  *Client.Main.lua:*
+
+  ```lua
+  -- Name: Client.Main
+  -- ClassName: LocalScript
+
+  [code]
+  ```
+
+  By default, Elixir will compile every file (save for `NevermoreEngineLoader.lua`) to a ModuleScript, so you have to override that by atleast setting the ClassName for both files. You can read more about setting properties in the [Script Properties](#script-properties) section.
+
+  **Note:** Nevermore requires the root object to be named `Nevermore`. There is currently no way to do this automatically, so you need to set `options.rbxName` when using this engine. Example:
+
+  ```lua
+  elixir{
+    engine = "Nevermore",
+    rbxName = "Nevermore"
+  }
+  ```
+
 #### options.ignored
 
 - Type: `Array`
