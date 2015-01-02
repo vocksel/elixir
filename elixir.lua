@@ -342,14 +342,14 @@ end
   [2] Keep everything consistent by sorting the properties.
 --]]
 function rbxm:getProperties(object)
-  local sorted = {}
+  local props = {}
   for k in pairs(object) do
     if type(k) == "string" and k ~= "ClassName" then -- [1]
-      sorted[#sorted+1] = k
+      table.insert(props, k)
     end
   end
-  table.sort(sorted) -- [2]
-  return sorted
+  table.sort(props) -- [2]
+  return props
 end
 
 --[[
