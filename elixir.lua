@@ -57,7 +57,7 @@ end
   ==============================================================================
 --]]
 
-function isDir(dir)
+local function isDir(dir)
   return lfs.attributes(dir, "mode") == "directory"
 end
 
