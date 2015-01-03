@@ -42,6 +42,24 @@ local elixir = {
   ]]
 }
 
+--[[
+  Default options for Elixir. It's best to configure these dynamically when
+  calling Elixir, rather than editing them here. If you ever update Elixir, you
+  would only need to update your options if the API changes.
+
+  Documentation for each option can be found in the API section of the README.
+--]]
+local defaults = {
+  source    = "source",
+  build     = "build",
+  fileName  = "elixir",
+  fileExt   = ".rbxmx",
+  rbxName   = "Elixir",
+  rbxClass  = "Configuration",
+  ignored   = nil,
+  engine    = nil
+}
+
 local lfs = require "lfs"
 
 if _VERSION == "Lua 5.2" then
@@ -78,6 +96,29 @@ local function getFileContents(path)
   file:close()
 
   return content
+end
+
+--[[
+  Merges two or more tables together.
+
+    local tab1 = { a = 25 }
+    local tab2 = { b = 50 }
+    local tab3 = { a = 20 }
+
+    merge(tab1, tab2, tab3) -- { a = 20, b = 50 }
+
+  Keys in the last table will overwrite keys of the same name in tables that
+  come before it.
+--]]
+local function merge(...)
+  local tables = {...}
+  local merged = {}
+  for i=1, #tables do
+    for k,v in pairs(tables[i]) do
+      merged[k] = v
+    end
+  end
+  return merged
 end
 
 
@@ -640,17 +681,8 @@ end
 --]]
 
 function elixir.elixir(options)
-  local options = options or {}
-  local file = Compiler.new{
-    source   = options.source   or "source",
-    build    = options.build    or "build",
-    fileName = options.fileName or "elixir",
-    fileExt  = options.fileExt  or ".rbxmx",
-    rbxName  = options.rbxName  or "Elixir",
-    rbxClass = options.rbxClass or "Configuration",
-    ignored  = options.ignored,
-    engine   = options.engine
-  }
+  local options = merge(defaults, options or {})
+  local file = Compiler.new(options)
   file:compile()
 end
 
