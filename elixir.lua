@@ -523,7 +523,7 @@ end
 --]]
 function Compiler:getEmbeddedProperties(path)
   local props = {}
-  local pattern = "^--%s(%w+):%s(%w+)"
+  local pattern = "^--%s(.*):%s(.*)"
   for line in io.lines(path) do
     if not line:match("^[--]+") then
       break
