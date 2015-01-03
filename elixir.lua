@@ -595,20 +595,19 @@ end
 
 function Compiler:recurseDir(path, obj)
   print("DIR", path)
-  for name in lfs.dir(path) do
-    if not self:isIgnored(name) then
-      local joined = path.."/"..name
-
+  for filename in lfs.dir(path) do
+    if not self:isIgnored(filename) then
+      local filePath = path.."/"..filename
       local dir = {
         ClassName = self.rbxClass,
-        Name = { "string", name }
+        Name = { "string", filename }
       }
 
-      if isDir(joined) then
-        obj[#obj+1] = self:recurseDir(joined, dir, true)
+      if isDir(filePath) then
+        obj[#obj+1] = self:recurseDir(filePath, dir)
       else
-        print("FILE", joined)
-        obj[#obj+1] = self:handleFile(joined, name)
+        print("FILE", filePath)
+        obj[#obj+1] = self:handleFile(filePath, filename)
       end
     end
   end
