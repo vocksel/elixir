@@ -145,15 +145,6 @@ Applicable engines:
 
   By default, Elixir will compile every file (save for `NevermoreEngineLoader.lua`) to a ModuleScript, so you have to override that by atleast setting the ClassName for both files. You can read more about setting properties in the [Script Properties](#script-properties) section.
 
-  **Note:** Nevermore requires the root object to be named `Nevermore`. There is currently no way to do this automatically, so you need to set `options.rbxName` when using this engine. Example:
-
-  ```lua
-  elixir{
-    engine = "Nevermore",
-    rbxName = "Nevermore"
-  }
-  ```
-
 #### options.ignored
 
 - Type: `Array`

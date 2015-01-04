@@ -548,6 +548,10 @@ local engines = {}
   turned into ModuleScripts.
 --]]
 engines.nevermore = {
+  options = {
+    rbxName = "Nevermore"
+  },
+
   compile = function(props, content)
     local name = props.BaseName
     local className = props.ClassName:lower()
@@ -717,6 +721,13 @@ end
 
 function elixir.elixir(options)
   local options = merge(defaults, options or {})
+  local engine = options.engine
+
+  if engine then
+    -- Allow engines to override the options passed by the user
+    options = merge(options, engines[engine:lower()].options)
+  end
+
   local file = Compiler.new(options)
   file:compile()
 end
