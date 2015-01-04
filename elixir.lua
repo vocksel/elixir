@@ -699,15 +699,12 @@ end
   file. Configure the paths and filenames at the top of this file.
 --]]
 function Compiler:compile()
-  local rbxmObj = self:recurseDir(self.source, {
-    ClassName = self.rbxClass,
-    Name = { "string", self.rbxName }
-  })
-
-  local rbxmPath = self.build.."/"..self.fileName..self.fileExt
+  local dest = self.build.."/"..self.fileName..self.fileExt
+  local root = { ClassName = self.rbxClass, Name = { "string", self.rbxName } }
+  local hierarchy = self:recurseDir(self.source, root)
 
   lfs.mkdir(self.build)
-  rbxm:save(rbxmObj, rbxmPath)
+  rbxm:save(hierarchy, dest)
 end
 
 
