@@ -547,22 +547,23 @@ local engines = {}
   Server.Main and Client.Main. Unless explicitely set, all .lua files will be
   turned into ModuleScripts.
 --]]
-function engines:nevermore(props, content)
-  local name = props.BaseName
-  local className = props.ClassName:lower()
+engines.nevermore = {
+  compile = function(props, content)
+    local name = props.BaseName
+    local className = props.ClassName:lower()
 
-  if name == "NevermoreEngineLoader" then
-    return rbxm:createScript("Script", name, content)
+    if name == "NevermoreEngineLoader" then
+      return rbxm:createScript("Script", name, content)
 
-  elseif className == "script" then
-    return rbxm:createScript("Script", name, content, true)
+    elseif className == "script" then
+      return rbxm:createScript("Script", name, content, true)
 
-  elseif className == "local" or className == "localscript" then
-    return rbxm:createScript("LocalScript", name, content, true)
+    elseif className == "local" or className == "localscript" then
+      return rbxm:createScript("LocalScript", name, content, true)
+    end
+    return rbxm:createScript("ModuleScript", name, content)
   end
-  return rbxm:createScript("ModuleScript", name, content)
-end
-
+}
 
 
 
@@ -625,8 +626,8 @@ function Compiler:useEngine(path, file)
   local content = getFileContents(path)
   local props = self:getFileProperties(path, file)
 
-  if engine == "nevermore" then
-    return engines:nevermore(props, content)
+  if engines[engine] then
+    return engines[engine].compile(props, content)
   end
   error("Unknown engine: "..self.engine, 2)
 end
