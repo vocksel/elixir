@@ -121,6 +121,68 @@ local function merge(...)
   return merged
 end
 
+--[[
+  This function allows you to embed Roblox properties at the top of a file using
+  inline comments.
+
+  Normally when you create a file, you would include the class in the filename.
+  Something like "player-entered.script.lua". This would generate a new Script
+  named "player-entered".
+
+  Embedded properties allow you to define the Name, ClassName, and other
+  properties, at the top of the file.
+
+  If we had a file named "boring-script.module.lua" with the following contents:
+
+    -- Name: SomeCoolScript
+    -- ClassName: LocalScript
+
+    [code]
+
+  Then a LocalScript named SomeCoolScript would be created. Note that embedded
+  properties take precedence over filename properties.
+
+  @param string path Full path to the Lua file. The contents are read for
+    embedded properties.
+
+  [1] No embedded properties were found in the file.
+--]]
+local function getEmbeddedProperties(path)
+  local props = {}
+  local pattern = "^--%s(.*):%s(.*)"
+  for line in io.lines(path) do
+    if not line:match("^[--]+") then
+      break
+    end
+    for k,v in line:gmatch(pattern) do
+      props[k] = v
+    end
+  end
+  if not next(props) then -- [1]
+    return
+  end
+  return props
+end
+
+--[[
+  Stores information about a file (name, extension, etc.) neatly in a table.
+
+  @param string filename Not the full path, just the name of the file. The name,
+    extension, and potentially ROBLOX properties are extracted from it.
+--]]
+local function getFilenameProperties(filename)
+  local baseName, ext = splitName(filename)
+  local name, className = splitName(baseName)
+  local props = {
+    BaseName = baseName,
+    Ext = ext,
+    Name = name,
+    ClassName = className
+  }
+
+  return props
+end
+
 
 
 
@@ -485,17 +547,20 @@ local engines = {}
   Server.Main and Client.Main. Unless explicitely set, all .lua files will be
   turned into ModuleScripts.
 --]]
-function engines:nevermore(baseName, className, content)
-  if baseName == "NevermoreEngineLoader" then
-    return rbxm:createScript("Script", baseName, content)
+function engines:nevermore(props, content)
+  local name = props.BaseName
+  local className = props.ClassName:lower()
+
+  if name == "NevermoreEngineLoader" then
+    return rbxm:createScript("Script", name, content)
 
   elseif className == "script" then
-    return rbxm:createScript("Script", baseName, content, true)
+    return rbxm:createScript("Script", name, content, true)
 
   elseif className == "local" or className == "localscript" then
-    return rbxm:createScript("LocalScript", baseName, content, true)
+    return rbxm:createScript("LocalScript", name, content, true)
   end
-  return rbxm:createScript("ModuleScript", baseName, content)
+  return rbxm:createScript("ModuleScript", name, content)
 end
 
 
@@ -537,44 +602,17 @@ function Compiler:isIgnored(filename)
 end
 
 --[[
-  This function allows you to embed Roblox properties at the top of a file using
-  inline comments.
+  Retrieves the filename, extension and ROBLOX properties from a file.
 
-  Normally when you create a file, you would include the class in the filename.
-  Something like "player-entered.script.lua". This would generate a new Script
-  named "player-entered".
-
-  Embedded properties allow you to define the Name, ClassName, and other
-  properties, at the top of the file.
-
-  If we had a file named "boring-script.module.lua" with the following contents:
-
-    -- Name: SomeCoolScript
-    -- ClassName: LocalScript
-
-    [code]
-
-  Then a LocalScript named SomeCoolScript would be created. Note that embedded
-  properties take precedence over filename properties.
-
-  @param string path Full path to the Lua file. The contents are read for
-    embedded properties.
-
-  [1] No embedded properties were found in the file.
+  @param string path
+  @param string filename
 --]]
-function Compiler:getEmbeddedProperties(path)
-  local props = {}
-  local pattern = "^--%s(.*):%s(.*)"
-  for line in io.lines(path) do
-    if not line:match("^[--]+") then
-      break
-    end
-    for k,v in line:gmatch(pattern) do
-      props[k] = v
-    end
-  end
-  if not next(props) then -- [1]
-    return
+function Compiler:getFileProperties(path, filename)
+  local embeddedProps = getEmbeddedProperties(path)
+  local props = getFilenameProperties(filename)
+  if embeddedProps then
+    props.Name = embeddedProps.Name
+    props.ClassName = embeddedProps.ClassName
   end
   return props
 end
@@ -582,10 +620,13 @@ end
 --[[
   Conditionally picks an Engine to use for compiling based on self.engine
 --]]
-function Compiler:useEngine(baseName, className, content)
+function Compiler:useEngine(path, file)
   local engine = self.engine:lower()
+  local content = getFileContents(path)
+  local props = self:getFileProperties(path, file)
+
   if engine == "nevermore" then
-    return engines:nevermore(baseName, className, content)
+    return engines:nevermore(props, content)
   end
   error("Unknown engine: "..self.engine, 2)
 end
@@ -604,24 +645,17 @@ end
       properties.
 --]]
 function Compiler:handleFile(path, file)
-  local props = self:getEmbeddedProperties(path)
+  local props = self:getFileProperties(path, file)
+  local ext = props.Ext:lower()
+  local className = props.ClassName:lower()
+  local name = props.Name
   local content = getFileContents(path)
-  local baseName, ext = splitName(file)
-  local name, className = splitName(baseName)
-
-  if props then
-    name = props.Name or name -- [1]
-    className = props.ClassName or className -- [1]
-  end
-
-  ext = ext:lower() -- [2]
-  className = className:lower() -- [2]
 
   if ext == "lua" then
     rbxm:checkScriptSyntax(content)
 
     if self.engine then
-      return self:useEngine(baseName, className, content)
+      return self:useEngine(path, file)
     end
 
     if className == "localscript" or className == "local" then
