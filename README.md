@@ -1,8 +1,10 @@
 # Elixir
 
-Adapted from the build system used in [Cure](https://github.com/Anaminus/roblox-cure), Elixir builds a directory structure and Lua files into a ROBLOX compatible XML file. Write your code, compile it, and drag-and-drop the generated file into your game.
+Elixir is a compiler for use with ROBLOX projects. You supply it with a directory, and it will convert all sub-directories and Lua files into a ROBLOX-compatible XML object that you can import into your game.
 
-My biggest issue with ROBLOX is a lack of Git integration and very minimal theming options. With Elixir, you can work with all your favorite tools.
+Elixir works best for someone that likes to work outside of ROBLOX Studio, where you can use your favorite text editor and VCS to develop your games. Native support for the [Nevermore](https://github.com/Quenty/NevermoreEngine) engine is also included, to make game development even more of a breeze.
+
+Originally adapted from the build system used in [Cure](https://github.com/Anaminus/roblox-cure). Without it I wouldn't have known something like this was possible.
 
 ## Getting Started
 
