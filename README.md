@@ -26,6 +26,10 @@ Read on to learn how to set ROBLOX properties for your Scripts, and the differen
 
 ## Script Properties
 
+When working with Elixir, there is no Properties panel like you would find in Studio to distinguish Scripts, ModuleScripts and LocalScripts. Instead, we have to use other methods of deriving the properties.
+
+### Filename Properties
+
 ROBLOX properties for each Script are derived from the filename. `HelloWorld.local.lua` creates a LocalScript named HelloWorld, `Rainbow.module.lua` creates a ModuleScript named Rainbow, and so on.
 
 `filename.classname.lua` is the format, and these are the supported classes:
@@ -35,7 +39,9 @@ ROBLOX properties for each Script are derived from the filename. `HelloWorld.loc
 
 Anything else is compiled to a Script. While not necessary, you can name your files `Something.script.lua` for consistency.
 
-You can also embed the Script's properties at the top of the file in a comment. If we had a file named `boring-script.module.lua` with the following contents:
+### Embedded Properties
+
+Another way to set properties for a Script is by embedding them in comments at the top of the file. If we had a file named `boring-script.module.lua` with the following contents:
 
 ```lua
 -- Name: SomeCoolScript
