@@ -13,9 +13,7 @@ You'll need a Lua interpreter and the LuaFileSystem module installed to run this
 Once you have Lua installed, all you have to do is get a copy of Elixir and call it.
 
 ```lua
--- build.lua
-
-local elixir = require "elixir/elixir"
+local elixir = require "elixir"
 
 elixir()
 ```
