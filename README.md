@@ -117,13 +117,40 @@ The ROBLOX instance that will be used to replicate the folder structure. Any ins
 
 - Type: `String`
 
-Engines are a way to override the default behavior of Elixir. They are generally very opinionated in how you structure your code, which is why custom methods are needed to compile everything.
+Engines, in the context of Elixir, are frameworks you can use to assist with developing your games. They come with their own code and require a specific directory structure to work correctly, but with the added benefit of handling run-time tasks.
+
+Note that engines have the possibility to override the options you can configure. For example, Nevermore needs `rbxName` set to `Nevermore` to run. Any changes you make to that option will have no effect.
+
+```lua
+elixir{
+  engine = "Nevermore",
+  rbxName = "Project" -- Overridden by Nevermore.
+}
+```
+
 
 Applicable engines:
 
-- `Nevermore` ([link](https://github.com/Quenty/NevermoreEngine))
+- `Nevermore` (https://github.com/Quenty/NevermoreEngine)
 
-  Simply copy the `App` and `Modules` directories from Nevermore into the source folder, deleting any of the modules that you don't require. Create a directory in `Modules` named `Game`, and add `Server.Main.lua` and `Client.Main.lua`.
+  - Overrides the `rbxName` option, setting it to `Nevermore`. Nevermore uses `ServerScriptService.Nevermore` when referencing itself.
+  - `NevermoreEngineLoader.lua` is compiled to a Script, and will not be disabled. This is the only script that should be enabled in the game.
+  - All Scripts and LocalScripts will be disabled.
+  - All other Lua files will be compiled into ModuleScripts.
+
+  Copy the `App` and `Modules` directories from Nevermore into the source folder, deleting any of the modules that you don't require. Create `Modules/Game` and two files inside that, `Server.Main.lua` and `Client.Main.lua`. The directory structure should look like this:
+
+  ```
+  source/
+    App/
+      NevermoreEngine.lua
+      NevermoreEngineLoader.lua
+    Modules/
+      Game/
+        Client.Main.lua
+        Server.Main.lua
+      ...
+  ```
 
   Inside of the new 'Main' files, you need to add the following comments to the top of them:
 
@@ -145,7 +172,7 @@ Applicable engines:
   [code]
   ```
 
-  By default, Elixir will compile every file (save for `NevermoreEngineLoader.lua`) to a ModuleScript, so you have to override that by atleast setting the ClassName for both files. You can read more about setting properties in the [Script Properties](#script-properties) section.
+  Because everything is compiled to a module (save for `NevermoreEngineLoader.lua`), you need to override that by setting the ClassName manually.
 
 #### options.ignored
 
