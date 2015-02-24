@@ -113,9 +113,9 @@ Name of the top-most instance in the model file (the root). This contains all of
 #### options.rbxClass
 
 - Type: `String`
-- Default: `Configuration`
+- Default: `Folder`
 
-The ROBLOX instance that will be used to replicate the folder structure. Any instance can be used, but Configurations are recommended.
+The ROBLOX instance that will be used to replicate the folder structure. Any instance can be used, but Folders are recommended.
 
 #### options.engine
 

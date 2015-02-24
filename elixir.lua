@@ -11,7 +11,7 @@
 --]]
 
 local elixir = {
-  _VERSION = "v0.2.0",
+  _VERSION = "v0.3.0",
   _URL = "https://github.com/voxeldavid/elixir",
   _DESCRIPTION = "Elixir is a build system for ROBLOX that compiles Lua code into an XML file",
   _LICENSE = [[
@@ -55,7 +55,7 @@ local defaults = {
   fileName  = "elixir",
   fileExt   = ".rbxmx",
   rbxName   = "Elixir",
-  rbxClass  = "Configuration",
+  rbxClass  = "Folder",
   ignored   = nil,
   engine    = nil
 }
