@@ -212,7 +212,7 @@ function model.properties(propertyList)
   return propertiesTag:format(table.concat(propertyTags))
 end
 
-function model.item(itemType, propertyList)
+function model.item(propertyList, itemType)
   local className = propertyList.ClassName
   local referentId = model.ref()
   local properties = model.properties(propertyList)
@@ -243,17 +243,17 @@ function Compiler:ConstructRobloxHierarchy()
   local function handleFile(path)
     local properties = getScriptProperties(path)
     model.lintScript(properties.Source)
-    return model.item("script", properties)
+    return model.item(properties)
   end
 
   local function handleFolder(file)
     local properties = { Name = file, ClassName = self.rbxClass }
-    return model.item("folder", properties)
+    return model.item(properties, "folder")
   end
 
   local function createContainer()
     local properties = { Name = self.rbxName, ClassName = self.rbxClass }
-    return model.item("folder", properties)
+    return model.item(properties, "folder")
   end
 
   local function recurse(path)
