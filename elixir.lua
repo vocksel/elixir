@@ -208,10 +208,17 @@ function model.item(propertyList)
 end
 
 --------------------------------------------------------------------------------
--- Compile
+-- Compiler
 --------------------------------------------------------------------------------
 
-local function constructRobloxHierarchy(path)
+local Compiler = {}
+
+function Compiler.new(obj)
+  obj = obj or {}
+  return setmetatable(obj, { __index = Compiler })
+end
+
+function Compiler:ConstructRobloxHierarchy()
   local hierarchy = {}
 
   local function recurse(path)
@@ -232,7 +239,7 @@ local function constructRobloxHierarchy(path)
       end
     end
   end
-  recurse(path)
+  recurse(self.source)
 
   return table.concat(hierarchy)
 end
@@ -244,11 +251,12 @@ end
 function elixir.compile(options)
   options = extend(defaults, options)
 
+  local compiler = Compiler.new(options)
   local robloxTag = "<roblox xmlns:xmime=\"http://www.w3.org/2005/05/xmlmime\" "..
     "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "..
     "xsi:noNamespaceSchemaLocation=\"http://www.roblox.com/roblox.xsd\" "..
     "version=\"4\">%s</roblox>"
-  local body = constructRobloxHierarchy(options.source)
+  local body = compiler:ConstructRobloxHierarchy()
   local modelFile = robloxTag:format(body)
 
   local dest = options.build.."/"..options.fileName..options.fileExt
