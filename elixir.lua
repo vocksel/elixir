@@ -71,6 +71,11 @@ local function splitFileName(file)
   return file:match("(.+)%.(.+)$")
 end
 
+local function splitFileFromPath(path)
+  -- source/Modules/Game/Server.Main.lua -> Server.Main.lua
+  return path:match("^.*/(.*)$")
+end
+
 local function getFileContents(path)
   local file = assert(io.open(path))
   local content = file:read("*a")
@@ -126,10 +131,10 @@ local function getEmbeddedProperties(path)
   return properties
 end
 
-local function getScriptProperties(path, file)
+local function getScriptProperties(path)
   local properties = getEmbeddedProperties(path)
   local defaultProperties = {
-    Name = file,
+    Name = splitFileFromPath(path),
     ClassName = "Script",
     Source = getFileContents(path)
   }
@@ -226,8 +231,8 @@ end
 function Compiler:ConstructRobloxHierarchy()
   local hierarchy = {}
 
-  local function handleFile(path, file)
-    local properties = getScriptProperties(path, file)
+  local function handleFile(path)
+    local properties = getScriptProperties(path)
     model.lintScript(properties.Source)
     return model.item("script", properties)
   end
@@ -249,7 +254,7 @@ function Compiler:ConstructRobloxHierarchy()
           recurse(fullPath)
           table.insert(hierarchy, "</Item>")
         else
-          table.insert(hierarchy, handleFile(fullPath, file))
+          table.insert(hierarchy, handleFile(fullPath))
         end
       end
     end
