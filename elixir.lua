@@ -288,6 +288,7 @@ function elixir.compile(options)
   options = extend(defaults, options)
 
   local compiler = Compiler.new(options)
+  local buildPath = options.build.."/"..options.fileName..options.fileExt
   local robloxTag = "<roblox xmlns:xmime=\"http://www.w3.org/2005/05/xmlmime\" "..
     "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "..
     "xsi:noNamespaceSchemaLocation=\"http://www.roblox.com/roblox.xsd\" "..
@@ -295,11 +296,9 @@ function elixir.compile(options)
   local body = compiler:ConstructRobloxHierarchy()
   local modelFile = robloxTag:format(body)
 
-  local dest = options.build.."/"..options.fileName..options.fileExt
-
   lfs.mkdir(options.build)
-  saveToFile(dest, modelFile)
-  print("\nCompiled to: "..dest)
+  saveToFile(buildPath, modelFile)
+  print("\nCompiled to: "..buildPath)
 end
 
 setmetatable(elixir, {
