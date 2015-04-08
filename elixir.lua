@@ -251,6 +251,11 @@ function Compiler:ConstructRobloxHierarchy()
     return model.item("folder", properties)
   end
 
+  local function createContainer()
+    local properties = { Name = self.rbxName, ClassName = self.rbxClass }
+    return model.item("folder", properties)
+  end
+
   local function recurse(path)
     for file in lfs.dir(path) do
       if file ~= "." and file ~= ".." and not isIgnored(self.ignored, file) then
@@ -268,7 +273,9 @@ function Compiler:ConstructRobloxHierarchy()
       end
     end
   end
+  table.insert(hierarchy, createContainer())
   recurse(self.source)
+  table.insert(hierarchy, "</Item>")
 
   return table.concat(hierarchy)
 end
