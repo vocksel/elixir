@@ -198,11 +198,16 @@ function model.properties(propertyList)
   return propertiesTag:format(table.concat(propertyTags))
 end
 
-function model.item(propertyList)
+function model.item(itemType, propertyList)
   local className = propertyList.ClassName
   local referentId = model.ref()
   local properties = model.properties(propertyList)
+
   local itemTag = "<Item class=\"%s\" referent=\"RBX%s\">%s</Item>"
+
+  if itemType == "folder" then
+    itemTag = "<Item class=\"%s\" referent=\"RBX%s\">%s"
+  end
 
   return itemTag:format(className, referentId, properties)
 end
@@ -229,12 +234,14 @@ function Compiler:ConstructRobloxHierarchy()
         print(fullPath)
 
         if isDirectory(fullPath) then
-          table.insert(hierarchy, model.item{ Name = file, ClassName = "Folder" })
+          local properties = { Name = file, ClassName = self.rbxClass }
+          table.insert(hierarchy, model.item("folder", properties))
           recurse(fullPath)
+          table.insert(hierarchy, "</Item>")
         else
           local properties = getScriptProperties(fullPath, file)
           model.lintScript(properties.Source)
-          table.insert(hierarchy, model.item(properties))
+          table.insert(hierarchy, model.item("script", properties))
         end
       end
     end
