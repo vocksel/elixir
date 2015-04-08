@@ -150,7 +150,7 @@ end
 local function getScriptProperties(path)
   local properties = getEmbeddedProperties(path)
   local defaultProperties = {
-    Name = splitFileFromPath(path),
+    Name = splitFileName(splitFileFromPath(path)),
     ClassName = "Script",
     Source = getFileContents(path)
   }
