@@ -226,6 +226,17 @@ end
 function Compiler:ConstructRobloxHierarchy()
   local hierarchy = {}
 
+  local function handleFile(path, file)
+    local properties = getScriptProperties(path, file)
+    model.lintScript(properties.Source)
+    return model.item("script", properties)
+  end
+
+  local function handleFolder(file)
+    local properties = { Name = file, ClassName = self.rbxClass }
+    return model.item("folder", properties)
+  end
+
   local function recurse(path)
     for file in lfs.dir(path) do
       if file ~= "." and file ~= ".." then
@@ -234,14 +245,11 @@ function Compiler:ConstructRobloxHierarchy()
         print(fullPath)
 
         if isDirectory(fullPath) then
-          local properties = { Name = file, ClassName = self.rbxClass }
-          table.insert(hierarchy, model.item("folder", properties))
+          table.insert(hierarchy, handleFolder(file))
           recurse(fullPath)
           table.insert(hierarchy, "</Item>")
         else
-          local properties = getScriptProperties(fullPath, file)
-          model.lintScript(properties.Source)
-          table.insert(hierarchy, model.item("script", properties))
+          table.insert(hierarchy, handleFile(fullPath, file))
         end
       end
     end
