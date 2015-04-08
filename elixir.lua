@@ -54,7 +54,7 @@ local defaults = {
   fileExt   = ".rbxmx",
   rbxName   = "Elixir",
   rbxClass  = "Folder",
-  ignored   = nil,
+  ignored   = {},
   engine    = nil
 }
 
@@ -64,6 +64,15 @@ local defaults = {
 
 local function isDirectory(path)
   return lfs.attributes(path, "mode") == "directory"
+end
+
+local function isIgnored(ignoreList, file)
+  for _,ignoredFile in ipairs(ignoreList) do
+    if file == ignoredFile then
+      return true
+    end
+  end
+  return false
 end
 
 local function splitFileName(file)
@@ -244,7 +253,7 @@ function Compiler:ConstructRobloxHierarchy()
 
   local function recurse(path)
     for file in lfs.dir(path) do
-      if file ~= "." and file ~= ".." then
+      if file ~= "." and file ~= ".." and not isIgnored(self.ignored, file) then
         local fullPath = path.."/"..file
 
         print(fullPath)
