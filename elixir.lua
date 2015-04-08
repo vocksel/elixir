@@ -66,6 +66,13 @@ local function isDirectory(path)
   return lfs.attributes(path, "mode") == "directory"
 end
 
+-- Compares a file to a list of ignored files. This is used when compiling
+-- so that files such as .gitignore can be omitted.
+--
+-- ignoreList - An Array filled with Strings
+-- file       - The String to compare against every item in ignoreList
+--
+-- Returns true if 'file' matches anything in 'ignoreList', false otherwise.
 local function isIgnored(ignoreList, file)
   for _,ignoredFile in ipairs(ignoreList) do
     if file == ignoredFile then
