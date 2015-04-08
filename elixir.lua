@@ -234,6 +234,34 @@ function model.item(propertyList, itemType)
 end
 
 --------------------------------------------------------------------------------
+-- Engines
+--------------------------------------------------------------------------------
+
+local engines = {}
+
+engines.nevermore = {
+  optionsOverride = {
+    rbxName = "Nevermore"
+  },
+
+  compile = function(path, properties)
+    local className = properties.ClassName
+    local file = splitFileName(splitFileFromPath(path))
+
+    if file ~= "NevermoreEngineLoader" then
+      -- All "Main" files must retain their current ClassName
+      if file:match("Main") then
+        properties.Disabled = true
+      else
+        properties.ClassName = "ModuleScript"
+      end
+    end
+
+    return model.item(properties)
+  end
+}
+
+--------------------------------------------------------------------------------
 -- Compiler
 --------------------------------------------------------------------------------
 
@@ -244,12 +272,25 @@ function Compiler.new(obj)
   return setmetatable(obj, { __index = Compiler })
 end
 
+function Compiler:UseEngine(path, properties)
+  local engine = engines[self.engine]
+  if engine then
+    return engine.compile(path, properties)
+  else
+    error("Unknown engine: \""..self.engine.."\"", 2)
+  end
+end
+
 function Compiler:ConstructRobloxHierarchy()
   local hierarchy = {}
 
   local function handleFile(path)
     local properties = getScriptProperties(path)
     model.lintScript(properties.Source)
+
+    if self.engine then
+      return self:UseEngine(path, properties)
+    end
     return model.item(properties)
   end
 
@@ -293,6 +334,13 @@ end
 
 function elixir.compile(options)
   options = extend(defaults, options)
+
+  if options.engine then
+    options.engine = options.engine:lower()
+  end
+  if engines[options.engine] then
+    options = extend(options, engines[options.engine].optionsOverride)
+  end
 
   local compiler = Compiler.new(options)
   local buildPath = options.build.."/"..options.fileName..options.fileExt
