@@ -96,13 +96,6 @@ Name of the directory where the model file is output. Automatically generated wh
 
 Name of the file created in `options.build`. This can be anything you like, it's only the name of the file on your system. `options.modelName` controls the in-game name.
 
-#### options.fileExt
-
-- Type: `String`
-- Default: `.rbxmx`
-
-ROBLOX recognizes `rbxm` and `rbxmx` as Model files that you can drag-and-drop into Studio. `rbxm` uses Binary, while `rbxmx` uses XML. Because Elixir only compiles to XML, the `rbxmx` extension is prefered.
-
 #### options.rbxName
 
 - Type: `String`

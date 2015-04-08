@@ -51,7 +51,6 @@ local defaults = {
   source    = "source",
   build     = "build",
   fileName  = "elixir",
-  fileExt   = ".rbxmx",
   rbxName   = "Elixir",
   rbxClass  = "Folder",
   ignored   = {},
@@ -343,7 +342,7 @@ function elixir.compile(options)
   end
 
   local compiler = Compiler.new(options)
-  local buildPath = options.build.."/"..options.fileName..options.fileExt
+  local buildPath = options.build.."/"..options.fileName..".rbxmx"
   local robloxTag = "<roblox xmlns:xmime=\"http://www.w3.org/2005/05/xmlmime\" "..
     "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "..
     "xsi:noNamespaceSchemaLocation=\"http://www.roblox.com/roblox.xsd\" "..
