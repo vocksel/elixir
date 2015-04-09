@@ -238,6 +238,17 @@ end
 
 local engines = {}
 
+local function isEngine(engineName)
+  -- engineName needs to be lowercase when indexing, but not when erroring.
+  local message = "Unknown engine: \""..engineName.."\""
+  return engines[engineName:lower()] or error(message)
+end
+
+local function overrideUserOptions(options)
+  local engineName = options.engine:lower()
+  return extend(options, engines[engineName].optionsOverride)
+end
+
 engines.nevermore = {
   optionsOverride = {
     rbxName = "Nevermore"
@@ -266,18 +277,18 @@ engines.nevermore = {
 
 local Compiler = {}
 
-function Compiler.new(obj)
-  obj = obj or {}
-  return setmetatable(obj, { __index = Compiler })
+function Compiler.new(options)
+  options = options or {}
+
+  if options.engine and isEngine(options.engine) then
+    overrideUserOptions(options)
+  end
+  return setmetatable(options, { __index = Compiler })
 end
 
 function Compiler:UseEngine(path, properties)
-  local engine = engines[self.engine]
-  if engine then
-    return engine.compile(path, properties)
-  else
-    error("Unknown engine: \""..self.engine.."\"", 2)
-  end
+  local engine = engines[self.engine:lower()]
+  return engine.compile(path, properties)
 end
 
 function Compiler:ConstructRobloxHierarchy()
@@ -335,13 +346,6 @@ function elixir.compile(options)
   options = extend(defaults, options)
 
   assert(isDirectory(options.source), "could not find a directory named \""..options.source.."\"")
-
-  if options.engine then
-    options.engine = options.engine:lower()
-  end
-  if engines[options.engine] then
-    options = extend(options, engines[options.engine].optionsOverride)
-  end
 
   local compiler = Compiler.new(options)
   local buildPath = options.build.."/"..options.fileName..".rbxmx"
