@@ -9,7 +9,7 @@
 -- [1] https://code.google.com/p/luaforwindows/
 
 local elixir = {
-  _VERSION = "v0.3.0",
+  _VERSION = "v1.0.0",
   _URL = "https://github.com/voxeldavid/elixir",
   _DESCRIPTION = "Elixir is a build system for ROBLOX that compiles Lua code into an XML file",
   _LICENSE = [[
