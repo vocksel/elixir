@@ -334,6 +334,8 @@ end
 function elixir.compile(options)
   options = extend(defaults, options)
 
+  assert(isDirectory(options.source), "could not find a directory named \""..options.source.."\"")
+
   if options.engine then
     options.engine = options.engine:lower()
   end
