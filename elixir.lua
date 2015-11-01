@@ -82,12 +82,12 @@ local function isIgnored(ignoreList, file)
 end
 
 local function splitFileName(file)
-  -- Server.Main.lua -> Server.Main, lua
+  -- "Server.Main.lua" -> "Server.Main", "lua"
   return file:match("(.+)%.(.+)$")
 end
 
 local function splitFileFromPath(path)
-  -- source/Modules/Game/Server.Main.lua -> Server.Main.lua
+  -- "source/Modules/Game/Server.Main.lua" -> "Server.Main.lua"
   return path:match("^.*/(.*)$")
 end
 
