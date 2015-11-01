@@ -119,43 +119,6 @@ local function extend(base, ext)
   return base
 end
 
--- This function allows you to embed ROBLOX properties at the top of a file
--- using inline comments.
---
--- View the "Script Properties" section of the README to learn more.
---
--- path - The path to the file to read for embedded properties.
---
--- Returns a table containing key/value pairs of the embedded properties.
-local function getEmbeddedProperties(path)
-  local properties = {}
-  -- Currently this will only find embedded properties if they are not preceded
-  -- by whitespace. Having a single newline at the start of the file prevents
-  -- the properties from being found.
-  local pattern = "^%-+ (.*): (.*)" -- "-- ClassName: Script"
-
-  for line in io.lines(path) do
-    local key, value = line:match(pattern)
-    if key and value then
-      properties[key] = value
-    else
-      break
-    end
-  end
-
-  return properties
-end
-
-local function getScriptProperties(path)
-  local properties = getEmbeddedProperties(path)
-  local defaultProperties = {
-    Name = splitFileName(splitFileFromPath(path)),
-    ClassName = "Script",
-    Source = getFileContents(path)
-  }
-  return extend(defaultProperties, properties)
-end
-
 local function encodeProperty(property, value)
   local stringTag = "<string name=\"%s\">%s</string>"
   local boolTag = "<bool name=\"%s\">%s</bool>"
@@ -232,6 +195,43 @@ function model.item(propertyList, itemType)
   return itemTag:format(className, referentId, properties)
 end
 
+-- This function allows you to embed ROBLOX properties at the top of a file
+-- using inline comments.
+--
+-- View the "Script Properties" section of the README to learn more.
+--
+-- path - The path to the file to read for embedded properties.
+--
+-- Returns a table containing key/value pairs of the embedded properties.
+function model.getEmbeddedProperties(path)
+  local properties = {}
+  -- Currently this will only find embedded properties if they are not preceded
+  -- by whitespace. Having a single newline at the start of the file prevents
+  -- the properties from being found.
+  local pattern = "^%-+ (.*): (.*)" -- "-- ClassName: Script"
+
+  for line in io.lines(path) do
+    local key, value = line:match(pattern)
+    if key and value then
+      properties[key] = value
+    else
+      break
+    end
+  end
+
+  return properties
+end
+
+function model.getScriptProperties(path)
+  local properties = model.getEmbeddedProperties(path)
+  local defaultProperties = {
+    Name = splitFileName(splitFileFromPath(path)),
+    ClassName = "Script",
+    Source = getFileContents(path)
+  }
+  return extend(defaultProperties, properties)
+end
+
 --------------------------------------------------------------------------------
 -- Engines
 --------------------------------------------------------------------------------
@@ -295,7 +295,7 @@ function Compiler:ConstructRobloxHierarchy()
   local hierarchy = {}
 
   local function handleFile(path)
-    local properties = getScriptProperties(path)
+    local properties = model.getScriptProperties(path)
     model.lintScript(properties.Source)
 
     if self.engine then
