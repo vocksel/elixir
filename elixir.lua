@@ -156,6 +156,23 @@ local function getScriptProperties(path)
   return extend(defaultProperties, properties)
 end
 
+local function encodeProperty(property, value)
+  local stringTag = "<string name=\"%s\">%s</string>"
+  local boolTag = "<bool name=\"%s\">%s</bool>"
+  -- Lua code is wrapped in a CDATA tag. No need to escape characters.
+  local codeTag = "<ProtectedString name=\"%s\"><![CDATA[%s]]></ProtectedString>"
+
+  if type(value) == "string" then
+    if property == "Source" then
+      return codeTag:format(property, value)
+    else
+      return stringTag:format(property, value)
+    end
+  elseif type(value) == "boolean" then
+    return boolTag:format(property, tostring(value))
+  end
+end
+
 --------------------------------------------------------------------------------
 -- ROBLOX Model Builder
 --------------------------------------------------------------------------------
@@ -185,23 +202,6 @@ function model.lintScript(source)
   local func, err = loadstring(source, "")
   if not func then
     print("WARNING: "..err:gsub("^%[.-%]:", "line "))
-  end
-end
-
-local function encodeProperty(property, value)
-  local stringTag = "<string name=\"%s\">%s</string>"
-  local boolTag = "<bool name=\"%s\">%s</bool>"
-  -- Lua code is wrapped in a CDATA tag. No need to escape characters.
-  local codeTag = "<ProtectedString name=\"%s\"><![CDATA[%s]]></ProtectedString>"
-
-  if type(value) == "string" then
-    if property == "Source" then
-      return codeTag:format(property, value)
-    else
-      return stringTag:format(property, value)
-    end
-  elseif type(value) == "boolean" then
-    return boolTag:format(property, tostring(value))
   end
 end
 
