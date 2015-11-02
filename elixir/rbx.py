@@ -1,6 +1,32 @@
 import re
+from xml.etree import ElementTree
 
 import elixir.fs
+
+class Referent:
+    """Gets a unique ID for a ROBLOX instance.
+
+    The "referent" attribute is applied to every <Item> tag, and is used to make
+    each instance unique.
+    """
+    def __init__(self):
+        self.counter = 0
+
+    def increment(self):
+        self.counter += 1
+        return "RBX{}".format(self.counter)
+
+ref = Referent()
+
+def create_item(class_name):
+    item = ElementTree.Element("Item", attrib={
+        "class": class_name,
+        "referent": ref.increment() })
+
+    # Add empty properties to propagate later.
+    ElementTree.SubElement(item, "Properties")
+
+    return item
 
 class Script(elixir.fs.File):
     def __init__(self, path):
@@ -72,3 +98,18 @@ class Script(elixir.fs.File):
         properties = self._get_embedded_properties()
         defaults.update(properties)
         return defaults
+
+    def get_xml(self):
+        """Gets the script as XML in a ROBLOX-compatible format."""
+
+        item = create_item(self.class_name)
+        properties = item.find("Properties")
+
+        name = ElementTree.SubElement(properties, "string", name="Name")
+        name.text = self.name
+
+        source = ElementTree.SubElement(properties, "ProtectedString",
+            name="Source")
+        source.text = self.source
+
+        return item
