@@ -86,7 +86,7 @@ class Script(elixir.fs.File):
         """
 
         comment = self._get_first_comment()
-        property_pattern = re.compile(r"(?P<name>\w+): (?P<value>.+)")
+        property_pattern = re.compile(r"(?P<name>\w+):\s+(?P<value>.+)")
         property_list = {}
         if comment:
             for match in property_pattern.finditer(comment):
