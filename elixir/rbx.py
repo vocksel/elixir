@@ -94,7 +94,7 @@ class Script(elixir.fs.File):
         return property_list
 
     def _get_properties(self):
-        defaults = { "Name": "Script", "ClassName": "Script" }
+        defaults = { "Name": self.name, "ClassName": "Script" }
         properties = self._get_embedded_properties()
         defaults.update(properties)
         return defaults

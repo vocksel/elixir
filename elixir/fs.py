@@ -4,7 +4,8 @@ import os.path
 class FilesystemObject:
     def __init__(self, path):
         self.path = path
-        self.name = os.path.basename(path)
+        self.full_name = os.path.basename(path)
+        self.name = os.path.splitext(self.full_name)[0]
 
 class File(FilesystemObject):
     def __init__(self, path):
