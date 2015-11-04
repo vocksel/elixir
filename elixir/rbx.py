@@ -28,6 +28,50 @@ def create_item(class_name):
 
     return item
 
+class Container(elixir.fs.Folder):
+    """Acts as a directory in the ROBLOX hierarchy.
+
+    path : str
+        The path to a directory on the filesystem.
+    class_name : str
+        This is the name of a ROBLOX class that will be used to contain scripts
+        and models. This can be any one of ROBLOX's classes, but it's
+        recommended to use a Folder.
+    """
+
+    def __init__(self, path, class_name="Folder"):
+        super().__init__(path)
+        self.class_name = class_name
+
+    def get_xml(self):
+        item = create_item(self.class_name)
+        properties = item.find("Properties")
+        name = ElementTree.SubElement(properties, "string", name="Name")
+        name.text = self.name
+
+        return item
+
+class Model(elixir.fs.File):
+    """A ROBLOX Model file.
+
+    This is any file with an `rbxmx` extension. They are ROBLOX Model instances
+    that were exported to XML files.
+    """
+
+    def __init__(self, path):
+        super().__init__(path)
+
+    def get_importable_contents(self):
+        """Gets the Model's contents.
+
+        This allows existing ROBLOX Models to be imported into the output file
+        when compiling.
+        """
+
+        with open(self.path) as f:
+            content = f.read()
+            return re.sub(r"</?roblox.*>", "", content)
+
 class Script(elixir.fs.File):
     def __init__(self, path):
         super().__init__(path)
