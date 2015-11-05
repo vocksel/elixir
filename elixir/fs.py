@@ -12,6 +12,10 @@ class File(FilesystemObject):
         assert os.path.isfile(path), '"{}" must be a file'.format(path)
         super().__init__(path)
 
+    def read(self):
+        with open(self.path) as f:
+            return f.read()
+
 class Folder(FilesystemObject):
     def __init__(self, path):
         assert os.path.isdir(path), '"{}" must be a folder'.format(path)

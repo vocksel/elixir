@@ -68,9 +68,8 @@ class Model(elixir.fs.File):
         when compiling.
         """
 
-        with open(self.path) as f:
-            content = f.read()
-            return re.sub(r"</?roblox.*>", "", content)
+        content = self.read()
+        return re.sub(r"</?roblox.*>", "", content)
 
 class Script(elixir.fs.File):
     def __init__(self, path):
@@ -80,11 +79,7 @@ class Script(elixir.fs.File):
 
         self.name = properties["Name"]
         self.class_name = properties["ClassName"]
-        self.source = self._get_source()
-
-    def _get_source(self):
-        with open(self.path) as f:
-            return f.read()
+        self.source = self.read()
 
     def _get_first_comment(self):
         """Gets the first comment in a Lua file.
