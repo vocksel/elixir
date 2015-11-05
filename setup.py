@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name="elixir",
-    version="0.1.0",
+    version="1.1.0",
     description="Turn directories and Lua files into a ROBLOX compatible XML file.",
     author="David Minnerly",
     license="MIT",
