@@ -23,23 +23,29 @@ class ModelCompiler:
         model.compile()
 
     source : str
-        The directory containing Lua code and ROBLOX Models that you want
-        compiled by Elixir.
-    dest : str
-        The directory where everything is compiled to.
-    output_file="elixir.rbxmx" : str
-        This is the name of the XML file that's exported to `dest`.
+        The directory containing Lua code and ROBLOX Models that you want Elixir
+        to compile.
+    dest="elixir" : str
+        The name of the file that will be created when compiling. Directories in
+        this path are automatically created for you.
+    extension=".rbxmx" : str
+        The extension appended to `dest`. It is important that this value be
+        either `.rbxmx` or `.rbxm`, as those are the two extensions ROBLOX
+        recognizes as Model files.
 
-        When changing this name, you _must_ keep the ".rbxmx" extension,
-        otherwise ROBLOX won't recognize it as a file that it can import.
+        You won't be able to import the file otherwise.
     """
 
-    def __init__(self, source, dest, output_file="elixir.rbxmx"):
-        if not os.path.exists(dest):
-            os.makedirs(dest)
+    def __init__(self, source, dest="elixir", extension=".rbxmx"):
+        self._make_dirs(dest)
 
         self.source = source
-        self.output_file = os.path.join(dest, output_file)
+        self.dest = dest+extension
+
+    def _make_dirs(self, path):
+        parent_folders = os.path.dirname(path)
+        if parent_folders and not os.path.exists(parent_folders):
+            os.makedirs(parent_folders)
 
     def _get_base_tag(self):
         """Gets the base <roblox> tag that emcompasses the model.
@@ -92,7 +98,7 @@ class ModelCompiler:
         """Compiles source code into a ROBLOX Model file."""
 
         # Writing as binary so that we can use UTF-8 encoding.
-        with open(self.output_file, "wb+") as f:
+        with open(self.dest, "wb+") as f:
             content = self._get_model_content()
             tree = ElementTree.ElementTree(content)
 
