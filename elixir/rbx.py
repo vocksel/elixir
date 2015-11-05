@@ -44,6 +44,8 @@ class Container(elixir.fs.Folder):
         self.class_name = class_name
 
     def get_xml(self):
+        """Gets the Container as XML in a ROBLOX-compatible format."""
+
         item = create_item(self.class_name)
         properties = item.find("Properties")
         name = ElementTree.SubElement(properties, "string", name="Name")
@@ -54,8 +56,13 @@ class Container(elixir.fs.Folder):
 class Model(elixir.fs.File):
     """A ROBLOX Model file.
 
-    This is any file with an `rbxmx` extension. They are ROBLOX Model instances
-    that were exported to XML files.
+    Any file with an `rbxmx` extension is a ROBLOX Model. They are XML files
+    containing the data of an in-game model.
+
+    Typically this is used to import existing models when compiling.
+
+    path : str
+        The path to a .rbxmx file.
     """
 
     def __init__(self, path):
@@ -72,6 +79,12 @@ class Model(elixir.fs.File):
         return re.sub(r"</?roblox.*>", "", content)
 
 class Script(elixir.fs.File):
+    """A representation of a ROBLOX Script.
+
+    path : str
+        The path to a .lua file.
+    """
+
     def __init__(self, path):
         super().__init__(path)
 
@@ -133,13 +146,19 @@ class Script(elixir.fs.File):
         return property_list
 
     def _get_properties(self):
+        """Extracts ROBLOX properties.
+
+        Things like the `Name` and `ClassName` properties that ROBLOX uses. This
+        method retrieves them by using aspects of the Script.
+        """
+
         defaults = { "Name": self.name, "ClassName": "Script" }
         properties = self._get_embedded_properties()
         defaults.update(properties)
         return defaults
 
     def get_xml(self):
-        """Gets the script as XML in a ROBLOX-compatible format."""
+        """Gets the Script as XML in a ROBLOX-compatible format."""
 
         item = create_item(self.class_name)
         properties = item.find("Properties")
