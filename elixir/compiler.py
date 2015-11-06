@@ -37,8 +37,6 @@ class ModelCompiler:
     """
 
     def __init__(self, source, dest, extension=".rbxmx"):
-        self._make_dirs(dest)
-
         self.source = source
         self.dest = dest+extension
 
@@ -46,6 +44,9 @@ class ModelCompiler:
         parent_folders = os.path.dirname(path)
         if parent_folders and not os.path.exists(parent_folders):
             os.makedirs(parent_folders)
+
+    def _make_output_path(self):
+        self._make_dirs(self.dest)
 
     def _get_base_tag(self):
         """Gets the base <roblox> tag that emcompasses the model.
@@ -94,8 +95,8 @@ class ModelCompiler:
 
         return model
 
-    def compile(self):
-        """Compiles source code into a ROBLOX Model file."""
+    def _write_model(self):
+        """Compiles the model and writes it to the output file."""
 
         # Writing as binary so that we can use UTF-8 encoding.
         with open(self.dest, "wb+") as f:
@@ -107,3 +108,9 @@ class ModelCompiler:
             # won't be able to import the model. We need to ensure all elements
             # have an ending tag by setting `short_empty_elements=False`.
             tree.write(f, encoding="utf-8", short_empty_elements=False)
+
+    def compile(self):
+        """Compiles source code into a ROBLOX Model file."""
+
+        self._make_output_path()
+        self._write_model()
