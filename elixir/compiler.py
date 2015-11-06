@@ -23,9 +23,9 @@ class ModelCompiler:
         model.compile()
 
     source : str
-        The directory containing Lua code and ROBLOX Models that you want Elixir
-        to compile.
-    dest="elixir" : str
+        The directory containing Lua code and ROBLOX Models that you want
+        compiled.
+    dest : str
         The name of the file that will be created when compiling. Directories in
         this path are automatically created for you.
     extension=".rbxmx" : str
@@ -36,7 +36,7 @@ class ModelCompiler:
         You won't be able to import the file otherwise.
     """
 
-    def __init__(self, source, dest="elixir", extension=".rbxmx"):
+    def __init__(self, source, dest, extension=".rbxmx"):
         self._make_dirs(dest)
 
         self.source = source
