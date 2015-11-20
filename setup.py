@@ -13,5 +13,8 @@ setup(
         "Programming Language :: Python :: 3.4",
     ],
     keywords="lua roblox compiler",
-    packages=["elixir"]
+    packages=["elixir"],
+    entry_points={
+        "console_scripts": [ "elixir=elixir.cli:main" ]
+    }
 )
