@@ -23,7 +23,7 @@ def create_item(class_name):
         "class": class_name,
         "referent": ref.increment() })
 
-    # Add empty properties to propagate later.
+    # Add an empty list of properties to fill later.
     ElementTree.SubElement(item, "Properties")
 
     return item
