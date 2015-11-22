@@ -8,8 +8,12 @@ class FilesystemObject:
         self.name = os.path.splitext(self.full_name)[0]
 
 class File(FilesystemObject):
+    """Wrapper for file objects.
+
+    path : str
+        The path to an existing file.
+    """
     def __init__(self, path):
-        assert os.path.isfile(path), '"{}" must be a file'.format(path)
         super().__init__(path)
 
     def read(self):
@@ -17,8 +21,12 @@ class File(FilesystemObject):
             return f.read()
 
 class Folder(FilesystemObject):
+    """Wrapper for folders on the filesystem.
+
+    path : str
+        The path to an existing folder.
+    """
     def __init__(self, path):
-        assert os.path.isdir(path), '"{}" must be a folder'.format(path)
         super().__init__(path)
 
     def get_files(self):
