@@ -5,22 +5,25 @@ from xml.etree import ElementTree
 from elixir.rbx import Container, Script
 
 class ModelCompiler:
-    """Compiles a ROBLOX-compatible XML file.
+    """Creates a ROBLOX Model from source code.
 
-    It takes directories and certain files under them and turns them into an
-    ROBLOX model file. ROBLOX recognizes these files and allows you to
-    drag-and-drop them right into your game.
+    It converts folders, Lua files, and ROBLOX models into an XML file that you
+    can import into your game.
 
     Usage:
 
-        # Getting paths to the source and dest directories
-        root = os.path.abspath(os.path.dirname(__file__))
+        # This is just getting paths to the source directory and the file that
+        # we'll be outputting to.
+        root   = os.path.abspath(os.path.dirname(__file__))
         source = os.path.join(root, "source")
-        build = os.path.join(root, "build")
+        build  = os.path.join(root, "build/output.rbxmx")
 
-        # Compiles everything under `source` as a model file to `build`.
+        # Compiles everything under `source/` to `build/output.rbxmx`.
         model = ModelCompiler(source, build)
         model.compile()
+
+    Now you'll have a ROBLOX Model in `build/` that you can drag into your
+    ROBLOX level. And just like that, all of your code is there!
 
     source : str
         The directory containing Lua code and ROBLOX Models that you want
@@ -29,11 +32,11 @@ class ModelCompiler:
         The name of the file that will be created when compiling. Directories in
         this path are automatically created for you.
     extension=".rbxmx" : str
-        The extension appended to `dest`. It is important that this value be
-        either `.rbxmx` or `.rbxm`, as those are the two extensions ROBLOX
-        recognizes as Model files.
+        The extension appended to `dest`.
 
-        You won't be able to import the file otherwise.
+        It's important that this value be either `.rbxmx` or `.rbxm`, as those
+        are the two extensions ROBLOX recognizes as Model files. You won't be
+        able to import the file otherwise.
     """
 
     def __init__(self, source, dest, extension=".rbxmx"):
