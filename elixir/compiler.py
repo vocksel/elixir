@@ -72,7 +72,7 @@ class ModelCompiler:
         elif os.path.isfile(path):
             return Script(path)
 
-    def _construct_hierarchy(self, path):
+    def _create_hierarchy(self, path):
         """Turns a directory structure into ROBLOX-compatible XML.
 
         path : str
@@ -93,9 +93,9 @@ class ModelCompiler:
 
         return hierarchy
 
-    def _get_model_content(self):
+    def _create_model(self):
         model = self._get_base_tag()
-        hierarchy = self._construct_hierarchy(self.source)
+        hierarchy = self._create_hierarchy(self.source)
         model.append(hierarchy)
 
         return model
@@ -105,8 +105,8 @@ class ModelCompiler:
 
         # Writing as binary so that we can use UTF-8 encoding.
         with open(self.dest, "wb+") as f:
-            content = self._get_model_content()
-            tree = ElementTree.ElementTree(content)
+            model = self._create_model()
+            tree = ElementTree.ElementTree(model)
 
             # ROBLOX does not support self-closing tags. In the event that an
             # element is blank (eg. a script doesn't have any contents) you
