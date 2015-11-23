@@ -83,12 +83,22 @@ class Script(elixir.fs.File):
 
     path : str
         The path to a .lua file.
+    disabled=False : bool
+        Whether the Script will be disabled in-game. A disabled script will not
+        run when the game starts.
     """
 
-    def __init__(self, path):
+    def __init__(self, path, disabled=False):
         super().__init__(path)
 
         properties = self._get_properties()
+
+        # Need to convert this to a string so that it can be set as the `text`
+        # attribute of its SubElement.
+        #
+        # ROBLOX's bool values are also `true` and `false`, so it needs to be
+        # lowercased.
+        self.disabled = str(disabled).lower()
 
         self.name = properties["Name"]
         self.class_name = properties["ClassName"]
@@ -165,6 +175,9 @@ class Script(elixir.fs.File):
 
         name = ElementTree.SubElement(properties, "string", name="Name")
         name.text = self.name
+
+        disabled = ElementTree.SubElement(properties, "bool", name="Disabled")
+        disabled.text = self.disabled
 
         source = ElementTree.SubElement(properties, "ProtectedString",
             name="Source")
