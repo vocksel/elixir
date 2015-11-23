@@ -40,6 +40,8 @@ class ModelCompiler:
         self.source = source
         self.dest = dest+extension
 
+        self.compile()
+
     def _make_dirs(self, path):
         parent_folders = os.path.dirname(path)
         if parent_folders and not os.path.exists(parent_folders):
