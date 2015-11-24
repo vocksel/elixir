@@ -81,15 +81,16 @@ class ModelCompiler:
 
         hierarchy = Container(path).get_xml()
 
-        def recurse(path, parent=hierarchy):
+        def recurse(path, hierarchy):
             for item in os.listdir(path):
                 item_path = os.path.join(path, item)
                 element = self._get_element(item_path).get_xml()
-                parent.append(element)
+                hierarchy.append(element)
 
                 if os.path.isdir(item_path):
-                    recurse(item_path, parent=element)
-        recurse(path)
+                    recurse(item_path, element)
+
+        recurse(path, hierarchy)
 
         return hierarchy
 
