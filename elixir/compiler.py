@@ -78,8 +78,9 @@ class ModelCompiler:
             "version": "4" })
 
     def _get_element(self, path):
+        filename = os.path.basename(path)
         if os.path.isdir(path):
-            return Container(path)
+            return Container(filename)
         elif os.path.isfile(path):
             return Script(path)
 

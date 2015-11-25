@@ -28,19 +28,19 @@ def create_item(class_name):
 
     return item
 
-class Container(elixir.fs.Folder):
+class Container:
     """Acts as a directory in the ROBLOX hierarchy.
 
-    path : str
-        The path to a directory on the filesystem.
-    class_name : str
+    name="Folder" : str
+        The name of the container in the ROBLOX hierarchy.
+    class_name="Folder" : str
         This is the name of a ROBLOX class that will be used to contain scripts
         and models. This can be any one of ROBLOX's classes, but it's
         recommended to use a Folder.
     """
 
-    def __init__(self, path, class_name="Folder"):
-        super().__init__(path)
+    def __init__(self, name="Folder", class_name="Folder"):
+        self.name = name
         self.class_name = class_name
 
     def get_xml(self):
@@ -48,6 +48,7 @@ class Container(elixir.fs.Folder):
 
         item = create_item(self.class_name)
         properties = item.find("Properties")
+
         name = ElementTree.SubElement(properties, "string", name="Name")
         name.text = self.name
 
