@@ -79,20 +79,25 @@ class ModelCompiler:
             The path to a directory to recurse through.
         """
 
-        hierarchy = Container(path).get_xml()
+        # This is the folder that holds all the source code.
+        root = Container(path)
+        root_xml = root.get_xml()
 
         def recurse(path, hierarchy):
             for item in os.listdir(path):
                 item_path = os.path.join(path, item)
-                element = self._get_element(item_path).get_xml()
-                hierarchy.append(element)
+
+                element = self._get_element(item_path)
+                element_xml = element.get_xml()
+
+                hierarchy.append(element_xml)
 
                 if os.path.isdir(item_path):
-                    recurse(item_path, element)
+                    recurse(item_path, element_xml)
 
-        recurse(path, hierarchy)
+        recurse(path, root_xml)
 
-        return hierarchy
+        return root_xml
 
     def _create_model(self):
         model = self._get_base_tag()
