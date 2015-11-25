@@ -54,7 +54,7 @@ class Container:
 
         return item
 
-class Model(elixir.fs.File):
+class Model:
     """A ROBLOX Model file.
 
     Any file with an `rbxmx` extension is a ROBLOX Model. They are XML files
@@ -67,7 +67,7 @@ class Model(elixir.fs.File):
     """
 
     def __init__(self, path):
-        super().__init__(path)
+        self.path = path
 
     def get_importable_contents(self):
         """Gets the Model's contents.
@@ -76,8 +76,9 @@ class Model(elixir.fs.File):
         when compiling.
         """
 
-        content = self.read()
-        return re.sub(r"</?roblox.*>", "", content)
+        with open(self.path) as f:
+            content = f.read()
+            return re.sub(r"</?roblox.*>", "", content)
 
 class Script(elixir.fs.File):
     """A representation of a ROBLOX Script.
