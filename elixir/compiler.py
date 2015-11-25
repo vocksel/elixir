@@ -37,11 +37,22 @@ class ModelCompiler:
         It's important that this value be either `.rbxmx` or `.rbxm`, as those
         are the two extensions ROBLOX recognizes as Model files. You won't be
         able to import the file otherwise.
+    model_name=None : str
+        This is the name of the top-most folder that contains all of your source
+        code.
+
+        If blank, it will use the name of the last folder in `source`. This
+        default isn't always desired. For example, if all of your code is under
+        `src/`, you might not want that to be the name of your project in-game.
     """
 
-    def __init__(self, source, dest, extension=".rbxmx"):
+    def __init__(self, source, dest, extension=".rbxmx", model_name=None):
+        if model_name is None:
+            model_name = os.path.basename(source)
+
         self.source = source
         self.dest = dest+extension
+        self.model_name = model_name
 
         self.compile()
 
@@ -80,7 +91,7 @@ class ModelCompiler:
         """
 
         # This is the folder that holds all the source code.
-        root = Container(path)
+        root = Container(self.model_name)
         root_xml = root.get_xml()
 
         def recurse(path, hierarchy):
