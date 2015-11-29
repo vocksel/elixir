@@ -150,11 +150,17 @@ class Script(elixir.fs.File):
         """
 
         comment = self._get_first_comment()
+
+        # Matches "-- Name: Value"
         property_pattern = re.compile(r"(?P<name>\w+):\s+(?P<value>.+)")
         property_list = {}
+
         if comment:
             for match in property_pattern.finditer(comment):
-                property_list[match.group("name")] = match.group("value")
+                name = match.group("name")
+                value = match.group("value")
+                property_list[name] = value
+
         return property_list
 
     def _get_properties(self):
