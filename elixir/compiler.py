@@ -4,7 +4,20 @@ from xml.etree import ElementTree
 
 from elixir.rbx import Container, Script
 
-class ModelCompiler:
+def create_path(path):
+    parent_folders = os.path.dirname(path)
+    if parent_folders and not os.path.exists(parent_folders):
+        os.makedirs(parent_folders)
+
+class BaseCompiler:
+    def __init__(self, source, dest):
+        self.source = source
+        self.dest = dest
+
+    def compile(self):
+        create_path(self.dest)
+
+class ModelCompiler(BaseCompiler):
     """Creates a ROBLOX Model from source code.
 
     It converts folders, Lua files, and ROBLOX models into an XML file that you
@@ -47,22 +60,14 @@ class ModelCompiler:
     """
 
     def __init__(self, source, dest, extension=".rbxmx", model_name=None):
+        super().__init__(source, dest+extension)
+
         if model_name is None:
             model_name = os.path.basename(source)
 
-        self.source = source
-        self.dest = dest+extension
         self.model_name = model_name
 
         self.compile()
-
-    def _make_dirs(self, path):
-        parent_folders = os.path.dirname(path)
-        if parent_folders and not os.path.exists(parent_folders):
-            os.makedirs(parent_folders)
-
-    def _make_output_path(self):
-        self._make_dirs(self.dest)
 
     def _get_base_tag(self):
         """Gets the base <roblox> tag that emcompasses the model.
@@ -135,5 +140,5 @@ class ModelCompiler:
     def compile(self):
         """Compiles source code into a ROBLOX Model file."""
 
-        self._make_output_path()
+        super().compile()
         self._write_model()
