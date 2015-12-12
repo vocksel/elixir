@@ -95,10 +95,10 @@ class Script(elixir.fs.File):
 
         properties = self._get_properties()
 
-        # Need to convert this to a string so that it can be set as the `text`
-        # attribute of its SubElement.
+        # This needs to be converted to a string so that it can be written as
+        # XML.
         #
-        # ROBLOX's bool values are also `true` and `false`, so it needs to be
+        # Also, ROBLOX's bool values are `true` and `false`, so it needs to be
         # lowercased.
         self.disabled = str(disabled).lower()
 
