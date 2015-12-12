@@ -85,7 +85,7 @@ class ModelCompiler(BaseCompiler):
         return Container(filename)
 
     def _process_file(self, path):
-        return Script(path)
+        return Script(path, "Script")
 
     def _get_element(self, path):
         if os.path.isdir(path):

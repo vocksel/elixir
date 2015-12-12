@@ -1,3 +1,4 @@
+import os.path
 import re
 from xml.etree import ElementTree
 
@@ -85,18 +86,26 @@ class Script(elixir.fs.File):
 
     path : str
         The path to a .lua file.
+    class_name="Script" : str
+        The type of Script you want to create.
+
+        As of writing this, "Script", "LocalScript" and "ModuleScript" are the
+        three main types of Scripts.
     disabled=False : bool
         Whether the Script will be disabled in-game. A disabled script will not
         run when the game starts.
     """
 
-    def __init__(self, path, disabled=False):
+    def __init__(self, path, class_name="Script", disabled=False):
         super().__init__(path)
 
-        properties = self._get_properties()
+        properties = self._get_embedded_properties()
 
-        self.name = properties["Name"]
-        self.class_name = properties["ClassName"]
+        filename = os.path.basename(path)
+        name = os.path.splitext(filename)[0]
+
+        self.name = properties.get("Name") or name
+        self.class_name = properties.get("ClassName") or class_name
         self.source = self.read()
 
         # This needs to be converted to a string so that it can be written as
@@ -162,18 +171,6 @@ class Script(elixir.fs.File):
                 property_list[name] = value
 
         return property_list
-
-    def _get_properties(self):
-        """Extracts ROBLOX properties.
-
-        Things like the `Name` and `ClassName` properties that ROBLOX uses. This
-        method retrieves them by using aspects of the Script.
-        """
-
-        defaults = { "Name": self.name, "ClassName": "Script" }
-        properties = self._get_embedded_properties()
-        defaults.update(properties)
-        return defaults
 
     def get_xml(self):
         """Gets the Script as XML in a ROBLOX-compatible format."""
