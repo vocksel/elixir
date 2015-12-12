@@ -67,8 +67,6 @@ class ModelCompiler(BaseCompiler):
 
         self.model_name = model_name
 
-        self.compile()
-
     def _get_base_tag(self):
         """Gets the base <roblox> tag that emcompasses the model.
 
