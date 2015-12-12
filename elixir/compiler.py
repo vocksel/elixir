@@ -80,12 +80,18 @@ class ModelCompiler(BaseCompiler):
             "xsi": "http://www.roblox.com/roblox.xsd",
             "version": "4" })
 
-    def _get_element(self, path):
+    def _process_dir(self, path):
         filename = os.path.basename(path)
+        return Container(filename)
+
+    def _process_file(self, path):
+        return Script(path)
+
+    def _get_element(self, path):
         if os.path.isdir(path):
-            return Container(filename)
+            return self._process_dir(path)
         elif os.path.isfile(path):
-            return Script(path)
+            return self._process_file(path)
 
     def _create_hierarchy(self, path):
         """Turns a directory structure into ROBLOX-compatible XML.
