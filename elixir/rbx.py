@@ -95,16 +95,16 @@ class Script(elixir.fs.File):
 
         properties = self._get_properties()
 
+        self.name = properties["Name"]
+        self.class_name = properties["ClassName"]
+        self.source = self.read()
+
         # This needs to be converted to a string so that it can be written as
         # XML.
         #
         # Also, ROBLOX's bool values are `true` and `false`, so it needs to be
         # lowercased.
         self.disabled = str(disabled).lower()
-
-        self.name = properties["Name"]
-        self.class_name = properties["ClassName"]
-        self.source = self.read()
 
     def _get_first_comment(self):
         """Gets the first comment in a Lua file.
