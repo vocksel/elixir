@@ -57,3 +57,21 @@ class BaseProcessor:
         """
 
         return Script(path)
+
+class NevermoreProcessor(BaseProcessor):
+    """Processor for NevermoreEngine.
+
+    https://github.com/Quenty/NevermoreEngine
+    """
+
+    def __init__(self, model_name):
+        self.model_name = "Nevermore"
+
+    def process_script(self, path):
+        filename = os.path.basename(path)
+        if filename == "NevermoreEngineLoader.lua":
+            return Script(path)
+        elif ".main" in filename.lower():
+            return Script(path, disabled=True)
+        else:
+            return Script(path, class_name="ModuleScript")
