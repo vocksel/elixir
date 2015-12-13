@@ -2,7 +2,8 @@ import os
 import os.path
 from xml.etree import ElementTree
 
-from elixir.rbx import Container, Script
+from elixir.rbx import Container
+from elixir.processors import BaseProcessor
 
 def create_path(path):
     parent_folders = os.path.dirname(path)
@@ -57,15 +58,27 @@ class ModelCompiler(BaseCompiler):
         If blank, it will use the name of the last folder in `source`. This
         default isn't always desired. For example, if all of your code is under
         `src/`, you might not want that to be the name of your project in-game.
+    processor=None : BaseProcessor
+        The processor to use when compiling.
+
+        A processor is what handles files and folders as the compiler comes
+        across them. It dictates the type of ROBLOX class is returned.
+
+        For example, when BaseProcessor comes across a Lua file, it will return
+        a new `elixir.rbx.Script` instance.
     """
 
-    def __init__(self, source, dest, extension=".rbxmx", model_name=None):
+    def __init__(self, source, dest, extension=".rbxmx", model_name=None,
+        processor=None):
         super().__init__(source, dest+extension)
 
         if model_name is None:
             model_name = os.path.basename(source)
 
-        self.model_name = model_name
+        if processor is None:
+            processor = BaseProcessor
+
+        self.processor = processor(model_name)
 
     def _get_base_tag(self):
         """Gets the base <roblox> tag that emcompasses the model.
@@ -80,18 +93,11 @@ class ModelCompiler(BaseCompiler):
             "xsi": "http://www.roblox.com/roblox.xsd",
             "version": "4" })
 
-    def _process_dir(self, path):
-        filename = os.path.basename(path)
-        return Container(filename)
-
-    def _process_file(self, path):
-        return Script(path, "Script")
-
     def _get_element(self, path):
         if os.path.isdir(path):
-            return self._process_dir(path)
+            return self.processor.process_folder(path)
         elif os.path.isfile(path):
-            return self._process_file(path)
+            return self.processor.process_script(path)
 
     def _create_hierarchy(self, path):
         """Turns a directory structure into ROBLOX-compatible XML.
@@ -101,7 +107,7 @@ class ModelCompiler(BaseCompiler):
         """
 
         # This is the folder that holds all the source code.
-        root = Container(self.model_name)
+        root = self.processor.get_base_container()
         root_xml = root.get_xml()
 
         def recurse(path, hierarchy):
