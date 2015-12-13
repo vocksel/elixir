@@ -45,12 +45,10 @@ class ModelCompiler(BaseCompiler):
     dest : str
         The name of the file that will be created when compiling. Directories in
         this path are automatically created for you.
-    extension=".rbxmx" : str
-        The extension appended to `dest`.
 
-        It's important that this value be either `.rbxmx` or `.rbxm`, as those
-        are the two extensions ROBLOX recognizes as Model files. You won't be
-        able to import the file otherwise.
+        It's important that the file extension should either be `.rbxmx` or
+        `.rbxm`. Those are the two filetypes recognized by ROBLOX Studio. You
+        won't be able to import the file into your game otherwise.
     model_name=None : str
         This is the name of the top-most folder that contains all of your source
         code.
@@ -68,9 +66,8 @@ class ModelCompiler(BaseCompiler):
         a new `elixir.rbx.Script` instance.
     """
 
-    def __init__(self, source, dest, extension=".rbxmx", model_name=None,
-        processor=None):
-        super().__init__(source, dest+extension)
+    def __init__(self, source, dest, model_name=None, processor=None):
+        super().__init__(source, dest)
 
         if model_name is None:
             model_name = os.path.basename(source)
