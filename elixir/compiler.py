@@ -91,10 +91,14 @@ class ModelCompiler(BaseCompiler):
             "version": "4" })
 
     def _get_element(self, path):
+        filename = os.path.basename(path)
+        extension = os.path.splitext(filename)[1]
+
         if os.path.isdir(path):
             return self.processor.process_folder(path)
         elif os.path.isfile(path):
-            return self.processor.process_script(path)
+            if extension == ".lua":
+                return self.processor.process_script(path)
 
     def _create_hierarchy(self, path):
         """Turns a directory structure into ROBLOX-compatible XML.
