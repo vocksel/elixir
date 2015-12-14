@@ -1,6 +1,6 @@
 import os.path
 
-from elixir.rbx import Container, Script
+from elixir.rbx import Container, Model, Script
 
 class BaseProcessor:
     """The primary processor class.
@@ -48,6 +48,9 @@ class BaseProcessor:
 
         folder_name = os.path.basename(path)
         return Container(folder_name)
+
+    def process_model(self, path):
+        return Model(path)
 
     def process_script(self, path):
         """Processing for Lua files in the source directory.

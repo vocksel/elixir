@@ -2,7 +2,7 @@ import os
 import os.path
 from xml.etree import ElementTree
 
-from elixir.rbx import Container
+from elixir.rbx import Container, Model
 from elixir.processors import BaseProcessor
 
 def create_path(path):
@@ -99,6 +99,8 @@ class ModelCompiler(BaseCompiler):
         elif os.path.isfile(path):
             if extension == ".lua":
                 return self.processor.process_script(path)
+            elif extension == ".rbxmx":
+                return self.processor.process_model(path)
 
     def _create_hierarchy(self, path):
         """Turns a directory structure into ROBLOX-compatible XML.
@@ -118,7 +120,17 @@ class ModelCompiler(BaseCompiler):
                 element = self._get_element(item_path)
                 element_xml = element.get_xml()
 
-                hierarchy.append(element_xml)
+                if isinstance(element, Model):
+                    # We need to use some special handling when we encounter a
+                    # model. Models have their own <roblox> tag which we need to
+                    # skip when importing.
+                    #
+                    # All we're looking for is the Model's elements, so we loop
+                    # over the XML and import them that way.
+                    for item in element_xml:
+                        hierarchy.append(item)
+                else:
+                    hierarchy.append(element_xml)
 
                 if os.path.isdir(item_path):
                     recurse(item_path, element_xml)

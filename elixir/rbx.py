@@ -70,16 +70,17 @@ class Model:
     def __init__(self, path):
         self.path = path
 
-    def get_importable_contents(self):
-        """Gets the Model's contents.
+    def get_xml(self):
+        """Get's the Model's XML.
 
-        This allows existing ROBLOX Models to be imported into the output file
-        when compiling.
+        This is used to import existing models into the model currently being
+        compiled.
         """
 
-        with open(self.path) as f:
-            content = f.read()
-            return re.sub(r"</?roblox.*>", "", content)
+        tree = ElementTree.parse(self.path)
+        root = tree.getroot()
+
+        return root
 
 class Script(elixir.fs.File):
     """A representation of a ROBLOX Script.
