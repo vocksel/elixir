@@ -1,43 +1,49 @@
+"""Elixir
+
+Usage:
+  elixir <source> <dest> [options]
+  elixir -h | --help
+
+Options:
+    -h, --help              Show this screen.
+    -m, --model-name <name> The name of the top-level container folder (default:
+                            folder name of the `source` argument.)
+    -p, --processor <name>  Use an engine when compiling.
+"""
+
 import os
-import argparse
+import os.path
+
+from docopt import docopt
 
 from elixir.compiler import ModelCompiler
+import elixir.processors
 
-def parse_arguments():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("source", help="The directory whose contents will be "
-        "compiled into a ROBLOX model file")
-    parser.add_argument("-d", "--dest",
-        help="Where the compiled source will be output to. Directories in this "
-             "path will be created for you. The extension is set by the "
-             "\"--extension\" argument. (default: \"elixir\")")
-    parser.add_argument("-x", "--extension", default=".rbxmx",
-        help="")
-    parser.add_argument("-n", "--rbx_name",
-        help="The name of the top-level container folder (default: name of "
-        "`source` argument)")
-    parser.add_argument("-c", "--rbx_class", default="Folder",
-        help="The ROBLOX instance used as a container (default: \"Folder\")")
-    parser.add_argument("-e", "--engine", choices=["nevermore"],
-        help="Use an engine when compiling")
+def get_processor(processor_name):
+    """Gets a processor by its name.
 
-    return parser.parse_args()
+    This allows the user to reference one of the processors from the command
+    line. Since you can't directly get the class itself from a command, we need
+    to use a string.
 
-def compile_model(source, dest):
-    root = os.getcwd()
-    source = os.path.join(root, source)
+    processor_name : str
+        The name of one of the available processors.
+    """
 
-    try:
-        dest = os.path.join(root, dest)
-        ModelCompiler(source, dest).compile()
-    except TypeError:
-        # This is only if there's no `dest`. I probably shouldn't be doing
-        # things this way.
-        ModelCompiler(source).compile()
+    if processor_name in dir(elixir.processors):
+        return getattr(elixir.processors, processor_name)
 
 def main():
-    args = parse_arguments()
-    compile_model(args.source, args.dest)
+    args = docopt(__doc__)
+
+    source = os.path.abspath(args["<source>"])
+    dest = os.path.abspath(args["<dest>"])
+    model_name = args["--model-name"]
+    processor = args["--processor"] or "BaseProcessor"
+
+    compiler = ModelCompiler(source, dest, model_name=model_name,
+        processor=get_processor(processor))
+    compiler.compile()
 
 if __name__ == '__main__':
     main()

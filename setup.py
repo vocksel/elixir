@@ -14,6 +14,9 @@ setup(
     ],
     keywords="lua roblox compiler",
     packages=["elixir"],
+    install_requires=[
+        "docopt"
+    ],
     entry_points={
         "console_scripts": [ "elixir=elixir.cli:main" ]
     }
