@@ -4,25 +4,14 @@ from xml.etree import ElementTree
 
 import elixir.fs
 
-class Referent:
-    """Gets a unique ID for a ROBLOX instance.
-
-    The "referent" attribute is applied to every <Item> tag, and is used to make
-    each instance unique.
-    """
-    def __init__(self):
-        self.counter = 0
-
-    def increment(self):
-        self.counter += 1
-        return "RBX{}".format(self.counter)
-
-ref = Referent()
-
 def create_item(class_name):
+    # A "referent" used to be applied as an attribute, but it is no longer
+    # needed. A referent is a sort of ID for each ROBLOX instance in the XML.
+    # ROBLOX imports models just fine without them, so it's not necessary to
+    # include.
     item = ElementTree.Element("Item", attrib={
-        "class": class_name,
-        "referent": ref.increment() })
+        "class": class_name
+    })
 
     # Add an empty list of properties to fill later.
     ElementTree.SubElement(item, "Properties")
