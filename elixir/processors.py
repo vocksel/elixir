@@ -12,7 +12,9 @@ class BaseProcessor:
     For example, when processing a file, we return a new Script. The XML of
     these instances is then appended into the hierarchy when compiling.
 
-    model_name :
+    model_name : str
+        The name of the model. This will default to the source directory's
+        name, it can be handy to override that.
     """
 
     def __init__(self, model_name):
