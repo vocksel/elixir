@@ -1,3 +1,9 @@
+# Temporarily ignoring tests
+tests/
+
+# Ignore any compiled model files
+*.rbxmx
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
