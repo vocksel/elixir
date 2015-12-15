@@ -91,6 +91,18 @@ class ModelCompiler(BaseCompiler):
             "version": "4" })
 
     def _get_element(self, path):
+        """Returns a Python instance representing a ROBLOX instance.
+
+        This passes off the path to the compiler's processor. It will then
+        process the file/folder to give you an instance from the `rbx` module.
+
+        From there you use the returned instance's `get_xml` method to append
+        the instance into the model hierarchy.
+
+        path : str
+            The path to a folder or file to be processed by the engine.
+        """
+
         filename = os.path.basename(path)
         extension = os.path.splitext(filename)[1]
 
