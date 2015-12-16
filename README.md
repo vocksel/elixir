@@ -27,7 +27,7 @@ Or with a Python script:
 
 ```python
 # build.py
-from elixir.compiler import ModelCompiler
+from elixir.compilers import ModelCompiler
 
 source = "src/"
 dest = "model.rbxmx"
@@ -46,7 +46,7 @@ Compilers are what take care of constructing the model file. They're the
 backbone of Elixir that brings everything together. Compilers and the command
 line are the primary interfaces to Elixir.
 
-### elixir.compiler.ModelCompiler
+### elixir.compilers.ModelCompiler
 
 This is Elixir's primary compiler. It converts folders, Lua files, and ROBLOX
 models into a file that you can import into your game.
@@ -82,7 +82,7 @@ into your game.
 **Example usage:**
 
 ```python
-from elixir.compiler import ModelCompiler
+from elixir.compilers import ModelCompiler
 
 source = "source/"
 dest = "build.rbxmx"
@@ -174,7 +174,7 @@ $ elixir src/ model.rbxmx --processor NevermoreProcessor
 Or by passing the processor into the compiler:
 
 ```python
-from elixir.compilers import ModelCompiler
+from elixir.compilerss import ModelCompiler
 from elixir.processors import NevermoreProcessor
 
 source = "src/"

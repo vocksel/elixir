@@ -16,7 +16,7 @@ import os.path
 
 from docopt import docopt
 
-from elixir.compiler import ModelCompiler
+from elixir.compilers import ModelCompiler
 import elixir.processors
 
 def get_processor(processor_name):

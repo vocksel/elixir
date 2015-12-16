@@ -1,4 +1,4 @@
-from elixir.compiler import ModelCompiler
+from elixir.compilers import ModelCompiler
 from elixir.processors import NevermoreProcessor
 
 source = "src/"

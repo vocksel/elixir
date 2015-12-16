@@ -8,7 +8,7 @@ you can pick the one you want and import it. Then you pass it as the `processor`
 argument to the compiler.
 
 ```python
-from elixir.compiler import ModelCompiler
+from elixir.compilers import ModelCompiler
 from elixir.processors import NevermoreProcessor
 
 source = "src/"

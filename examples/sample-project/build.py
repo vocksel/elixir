@@ -1,4 +1,4 @@
-from elixir.compiler import ModelCompiler
+from elixir.compilers import ModelCompiler
 
 source = "src/"
 dest = "model.rbxmx"
