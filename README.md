@@ -1,43 +1,102 @@
 # Elixir
 
-Elixir is a compiler for use with ROBLOX projects. You supply it with a
-directory, and it will convert all sub-directories and Lua files into a
-ROBLOX-compatible XML file that you can import into your game.
+Compiles Lua source code into a ROBLOX-compatible XML file that can be easily
+imported into your game.
 
 Elixir is best for someone that prefers to work outside of ROBLOX Studio,
-where you can leverage the full power of Version Control and use your favorite
+where you can leverage the power of a version control system and your favorite
 text editor.
-
-Native support for the [Nevermore][nevermore] engine is also included, to make
-game development even more of a breeze.
 
 ## Getting Started
 
-You'll need a Lua interpreter and the LuaFileSystem module installed to run
-Elixir. In Windows this can be done by installing [LuaForWindows][lfw], which
-comes bundled with LuaFileSystem.
+All you need is Python 3.4+ and you're good to go. You can install Elixir by
+simply running the setup script.
 
-Once you have Lua installed, go ahead and grab a copy of Elixir. You can place
-it wherever you like, just make sure you can `require()` it.
-
-Next you need to create a file that you will run when you want to compile your
-project. `build.lua` is a good name. In the contents of this file paste the
-following:
-
-```lua
-local elixir = require "elixir"
-
-elixir()
+```bash
+$ python setup.py install
 ```
 
-Now you can run it with `lua build.lua`, and if you have any Lua files in
-`source/`, they should all be compiled to to a ROBLOX model file.
+Elixir can be run in two ways. From the command line:
+
+```bash
+# Displays all of the arguments and options that you need to know about.
+$ elixir -h
+```
+
+Or with a Python script:
+
+```python
+# build.py
+from elixir.compiler import ModelCompiler
+
+source = "src/"
+dest = "model.rbxmx"
+
+compiler = ModelCompiler(source, dest)
+compiler.compile()
+```
+
+Running the `elixir` command lets you compile models quickly and easily, but if
+you have a lot of options you want to pass in, it can be beneficial to create a
+script like the above that you simply run with `python build.py`.
+
+## Compilers
+
+Compilers are what take care of constructing the model file. They're the
+backbone of Elixir that brings everything together. Compilers and the command
+line are the primary interfaces to Elixir.
+
+### elixir.compiler.ModelCompiler
+
+This is Elixir's primary compiler. It converts folders, Lua files, and ROBLOX
+models into a file that you can import into your game.
+
+This allows you to keep your codebase separate from your ROBLOX level. When
+you're ready to apply your code changes, you compile it into a model and drag it
+into your game.
+
+**Parameters:**
+
+- **_source_**: The directory containing Lua code and ROBLOX Models that you
+  want compiled.
+
+- **_dest_**: The name of the file that will be created when compiling.
+
+  Directories in this path are automatically created for you.
+
+  It's important that the file extension should either be `.rbxmx` or `.rbxm`.
+  Those are the two filetypes recognized by ROBLOX Studio. You won't be able to
+  import the file into your game otherwise.
+
+- **_model_name=None_**: This is the name of the top-most folder that contains
+  all of your source code in-game.
+
+  By default, it will use the name of `source`. For example, if this points to
+  the `src/` directory, that will be the name that appears in-game. It's common
+  to change this to the name of your project.
+
+- **_processor=BaseProcessor_**: The processor to use when compiling. A
+  processor is what handles files and folders as the compiler comes across them.
+  It dictates the type of ROBLOX class is returned.
+
+**Example usage:**
+
+```python
+from elixir.compiler import ModelCompiler
+
+source = "source/"
+dest = "build.rbxmx"
+model_name = "Project"
+
+compiler = ModelCompiler(source, dest, model_name=model_name)
+compiler.compile()
+```
 
 ## Properties
 
 When working with Elixir, there is no Properties panel like you would find in
-Studio. To make up for this, properties are defined using inline comments at the
-top of your Lua files.
+ROBLOX Studio. To make up for this, properties are defined using inline comments
+at the top of your Lua files.
 
 ```lua
 -- Name: HelloWorld
@@ -54,158 +113,105 @@ List of properties:
 
 - **Name**: Any alphanumeric string can be used for the name (defaults to the
   file name).
-- **ClassName**: This can be any one of the Script instances (defaults to
+- **ClassName**: This can be any one of ROBLOX's Script instances (defaults to
   `Script`).
 
-While you can omit properties when you want to use the defaults, it's advised to
-define all of them for consistency.
+## Importing Models
 
-## API
+ROBLOX model files inside of the source directory will be automatically imported
+when compiling.
 
-### elixir([options])
+**This only applies to files with the extension `rbxmx`.** That's the XML
+variant of ROBLOX's models. The other is `rbxm`, which is the binary format.
+Any model file in your source directory must be in XML if you want it to be
+imported.
 
-```lua
--- No options. Uses defaults
-elixir()
+The contents of the model are unpacked to the current folder in-game when the
+compiler comes across them. The model file itself does not act as a folder. For
+example, if you had a project setup like this on your computer:
 
--- Uses different 'source' and 'build' directories
-elixir{
-  source = "src",
-  build = "dist"
-}
+```
+src/
+  Model.rbxmx
+  AnotherScript.lua
+  Script.lua
 ```
 
-#### options
+And the in-game contents of `Model.rbxmx` were:
 
-- Type: `Table`
-
-All configurable values for Elixir can be modified in this table.
-
-**Note:** the locations for `options.source` and `options.build` are relative
-to where you call Elixir from. If you have Elixir under `project/lib/elixir`,
-and your build file under `project/build.lua`, then when you run the build
-script it will find the source folder under `project/source/`.
-
-#### options.source
-
-- Type: `String`
-- Default: `source`
-
-Name of the directory that holds your source code.
-
-#### options.build
-
-- Type: `String`
-- Default: `build`
-
-Name of the directory where the model file is output to. Automatically generated
-when Elixir is run.
-
-#### options.fileName
-
-- Type: `String`
-- Default: `elixir`
-
-Name of the file created in `options.build`. This can be anything you like, it's
-only the name of the file on your system. `options.rbxName` controls the in-game
-name.
-
-#### options.rbxName
-
-- Type: `String`
-- Default: `Elixir`
-
-Name of the top-most instance in the model file (the root). This contains all of
-the descendants of the compiled source directory.
-
-#### options.rbxClass
-
-- Type: `String`
-- Default: `Folder`
-
-The ROBLOX instance that will be used to replicate the directory structure. Any
-instance can be used, but Folders are recommended.
-
-#### options.ignored
-
-- Type: `Array`
-
-A list of files to skip over when compiling. This is especially useful when
-using .gitignore, as that's not something normally compiled with your source
-code.
-
-#### options.engine
-
-- Type: `String`
-
-Engines are frameworks you can use to assist with developing your games. They
-come with their own code and require a specific directory structure to work
-correctly, but with the added benefit of making game development significantly
-easier.
-
-Engines have the possibility to override the options you can configure. For
-example, Nevermore needs `options.rbxName` set to `Nevermore` to run. Any
-changes you make to that option will have no effect.
-
-```lua
-elixir{
-  engine = "Nevermore",
-  rbxName = "Project" -- Overridden by Nevermore.
-}
+```
+Model/
+  Part
+  Part
+Part
 ```
 
-Applicable engines:
+It would look like this in-game:
 
-- `Nevermore` (https://github.com/Quenty/NevermoreEngine)
+```
+src/
+  Model/
+    Part
+    Part
+  Part
+  AnotherScript
+  Script
+```
 
-  - Overrides the `rbxName` option, setting it to `Nevermore`. Nevermore
-    internally referenced itself as `ServerScriptService.Nevermore`, so it can't
-    use the default rbxName of `Elixir`.
-  - `NevermoreEngineLoader.lua` is compiled to a Script, and will not be
-    disabled. This is the only script that should be enabled in the game.
-  - All Scripts and LocalScripts will be disabled.
-  - All other Lua files will be compiled into ModuleScripts.
+## Processors
 
-  Copy the `App` and `Modules` directories from Nevermore into the source
-  folder, deleting any of the modules that you don't require. Create
-  `Modules/Game` and two files inside that, `Server.Main.lua` and
-  `Client.Main.lua`. The directory structure should look like this:
+A processor is what the compilers use to determine what happens when they
+encounter a file or folder. They're easy to extend and allow you to process
+your source code in any way you want.
 
-  ```
-  source/
-    App/
-      NevermoreEngine.lua
-      NevermoreEngineLoader.lua
-    Modules/
-      Game/
-        Client.Main.lua
-        Server.Main.lua
-      ...
-  ```
+You can make use of an existing processor with the `--processor` flag on the
+command line:
 
-  Inside of the new 'Main' files, you need to add the following comments to the
-  top of them:
+```bash
+$ elixir src/ model.rbxmx --processor NevermoreProcessor
+```
 
-  *Server.Main.lua:*
+Or by passing the processor into the compiler:
 
-  ```lua
-  -- Name: Server.Main
-  -- ClassName: Script
+```python
+from elixir.compilers import ModelCompiler
+from elixir.processors import NevermoreProcessor
 
-  [code]
-  ```
+source = "src/"
+dest = "model.rbxmx"
 
-  *Client.Main.lua:*
+compiler = ModelCompiler(source, dest, processor=NevermoreProcessor)
+compiler.compile()
+```
 
-  ```lua
-  -- Name: Client.Main
-  -- ClassName: LocalScript
+When you're using a processor, be sure to read over everything it does. They
+can compile things in unexpected ways, and override the `model_name` parameter.
 
-  [code]
-  ```
+### elixir.processors.BaseProcessor
 
-  Everything is compiled to a module (save for `NevermoreEngineLoader.lua`), so
-  you need to override that by setting the ClassName manually.
+This is the default processor class that Elixir uses. All other processors
+should inherit from it.
 
-[nevermore]: https://github.com/Quenty/NevermoreEngine
-[lfw]:       https://code.google.com/p/luaforwindows/
+
+- All folders are compiled to `Folders`.
+- All Lua files are compiled to `Scripts`.
+- All ROBLOX XML models are unpacked at their position in the hierarchy. See
+  [Importing Models](#importing-models) for more details.
+
+Note that the classes mentioned are the in-game ones that ROBLOX uses, we're not
+referring to the custom Python classes in `elixir.rbx`.
+
+### elixir.processors.NevermoreProcessor
+
+A processor for [NevermoreEngine](https://github.com/Quenty/NevermoreEngine), a
+project by Quenty to help you structure your game.
+
+Example usage at [examples/nevermore](examples/nevermore).
+
+- Overrides `model_name` to `Nevermore`. Nevermore internally references itself
+  at `ServerScriptService.Nevermore`, so we need to ensure it's going by the
+  correct name, otherwise it will error.
+- `NevermoreEngineLoader.lua` is compiled to a `Script`, and is the only one
+  that will be enabled.
+- `Scripts` and `LocalScripts` will be disabled.
+- All other Lua files will be compiled into `ModuleScripts`.
