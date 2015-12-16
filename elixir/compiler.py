@@ -67,6 +67,9 @@ class ModelCompiler(BaseCompiler):
     """
 
     def __init__(self, source, dest, model_name=None, processor=None):
+        source = os.path.normpath(source)
+        dest = os.path.normpath(dest)
+
         super().__init__(source, dest)
 
         if model_name is None:
