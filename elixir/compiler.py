@@ -66,7 +66,7 @@ class ModelCompiler(BaseCompiler):
         a new `elixir.rbx.Script` instance.
     """
 
-    def __init__(self, source, dest, model_name=None, processor=None):
+    def __init__(self, source, dest, model_name=None, processor=BaseProcessor):
         source = os.path.normpath(source)
         dest = os.path.normpath(dest)
 
@@ -74,9 +74,6 @@ class ModelCompiler(BaseCompiler):
 
         if model_name is None:
             model_name = os.path.basename(source)
-
-        if processor is None:
-            processor = BaseProcessor
 
         self.processor = processor(model_name)
 
