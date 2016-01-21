@@ -4,6 +4,28 @@ from xml.etree import ElementTree
 
 import elixir.fs
 
+def is_module(path):
+    """Checks if the file is a Lua module.
+
+    path : str
+        The path to a Lua file.
+    """
+
+    with open(path) as f:
+        content = f.read()
+
+    # Looks for a `return` statement at the end of the file. If it finds one,
+    # it's safe to assume that we're looking at a Lua module.
+    #
+    # We're matching for any number of spaces at the end incase there are a lot
+    # of newlines at the end of the file.
+    module_return_pattern = re.compile(r"return\s+\w+\s+$")
+
+    if module_return_pattern.search(content):
+        return True
+    else:
+        return False
+
 def create_item(class_name):
     # A "referent" used to be applied as an attribute, but it is no longer
     # needed. A referent is a sort of ID for each ROBLOX instance in the XML.

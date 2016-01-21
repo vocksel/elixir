@@ -116,6 +116,15 @@ List of properties:
 - **ClassName**: This can be any one of ROBLOX's Script instances (defaults to
   `Script`).
 
+## Modules
+
+Any Lua file with a `return` statement at the end of the file is assumed to be a
+ModuleScript when compiling.
+
+This means you generally won't have to bother with setting properties at the top
+of the file. One of the few cases where it's needed is when creating
+LocalScripts.
+
 ## Importing Models
 
 ROBLOX model files inside of the source directory will be automatically imported

@@ -1,6 +1,6 @@
 import os.path
 
-from elixir.rbx import Container, Model, Script
+from elixir.rbx import is_module, Container, Model, Script
 
 class BaseProcessor:
     """The primary processor class.
@@ -61,7 +61,10 @@ class BaseProcessor:
             The path to a Lua file.
         """
 
-        return Script(path)
+        if is_module(path):
+            return Script(path, class_name="ModuleScript")
+        else:
+            return Script(path)
 
 class NevermoreProcessor(BaseProcessor):
     """Processor for NevermoreEngine.
