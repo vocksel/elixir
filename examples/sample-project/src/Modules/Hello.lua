@@ -1,5 +1,3 @@
--- ClassName: ModuleScript
-
 local hello = {}
 
 function hello.greet()
