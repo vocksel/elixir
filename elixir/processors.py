@@ -67,9 +67,14 @@ class BaseProcessor:
             return Script(path)
 
 class NevermoreProcessor(BaseProcessor):
-    """Processor for NevermoreEngine.
+    """Processor for NevermoreEngine (Legacy).
 
-    https://github.com/Quenty/NevermoreEngine
+    This should be only used on or before commit b9b5a8 (linked below).
+    Nevermore was refactored and no longer requries this special handling.
+
+    This processor is kept here for legacy support.
+
+    https://github.com/Quenty/NevermoreEngine/tree/b9b5a836e4b5801ba19abfa2a5eab79921076542
     """
 
     def __init__(self, model_name):

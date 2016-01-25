@@ -210,7 +210,11 @@ should inherit from it.
 Note that the classes mentioned are the in-game ones that ROBLOX uses, we're not
 referring to the custom Python classes in `elixir.rbx`.
 
-### elixir.processors.NevermoreProcessor
+### elixir.processors.NevermoreProcessor (Legacy)
+
+**NevermoreEngine no longer requires a custom processor.** This is kept for
+legacy support. The last version supported by this processor can be found
+[here](https://github.com/Quenty/NevermoreEngine/tree/b9b5a8).
 
 A processor for [NevermoreEngine](https://github.com/Quenty/NevermoreEngine), a
 project by Quenty to help you structure your game.
