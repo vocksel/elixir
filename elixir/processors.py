@@ -11,35 +11,7 @@ class BaseProcessor:
 
     For example, when processing a file, we return a new Script. The XML of
     these instances is then appended into the hierarchy when compiling.
-
-    model_name : str
-        The name of the model. This will default to the source directory's
-        name, it can be handy to override that.
     """
-
-    def __init__(self, model_name):
-        self.model_name = model_name
-
-    def get_base_container(self):
-        """Gets the container that will hold all of the source code.
-
-        Typically, you won't want the name of the root folder to be the name of
-        the source folder that you passed in to the compiler. Instead of having
-        a structure of:
-
-            src/
-              SomeScript.lua
-              AnotherScript.lua
-
-        This will return a new Container with the name of `model_name`, so you
-        can properly name your project in-game. Like so:
-
-            ProjectName/ <- This depends on what was set for `model_name`
-              SomeScript.lua
-              AnotherScript.lua
-        """
-
-        return Container(self.model_name)
 
     def process_folder(self, path):
         """Processing for folders in the source directory.
@@ -76,9 +48,6 @@ class NevermoreProcessor(BaseProcessor):
 
     https://github.com/Quenty/NevermoreEngine/tree/b9b5a836e4b5801ba19abfa2a5eab79921076542
     """
-
-    def __init__(self, model_name):
-        self.model_name = "Nevermore"
 
     def process_script(self, path):
         filename = os.path.basename(path)

@@ -49,13 +49,6 @@ class ModelCompiler(BaseCompiler):
         It's important that the file extension should either be `.rbxmx` or
         `.rbxm`. Those are the two filetypes recognized by ROBLOX Studio. You
         won't be able to import the file into your game otherwise.
-    model_name=None : str
-        This is the name of the top-most folder that contains all of your source
-        code.
-
-        If blank, it will use the name of the last folder in `source`. This
-        default isn't always desired. For example, if all of your code is under
-        `src/`, you might not want that to be the name of your project in-game.
     processor=None : BaseProcessor
         The processor to use when compiling.
 
@@ -66,16 +59,13 @@ class ModelCompiler(BaseCompiler):
         a new `elixir.rbx.Script` instance.
     """
 
-    def __init__(self, source, dest, model_name=None, processor=BaseProcessor):
+    def __init__(self, source, dest, processor=BaseProcessor):
         source = os.path.normpath(source)
         dest = os.path.normpath(dest)
 
         super().__init__(source, dest)
 
-        if model_name is None:
-            model_name = os.path.basename(source)
-
-        self.processor = processor(model_name)
+        self.processor = processor()
 
     def _get_base_tag(self):
         """Gets the base <roblox> tag that emcompasses the model.
@@ -121,9 +111,7 @@ class ModelCompiler(BaseCompiler):
             The path to a directory to recurse through.
         """
 
-        # This is the folder that holds all the source code.
-        root = self.processor.get_base_container()
-        root_xml = root.get_xml()
+        root_xml = self._get_base_tag()
 
         def recurse(path, hierarchy):
             for item in os.listdir(path):
@@ -152,11 +140,7 @@ class ModelCompiler(BaseCompiler):
         return root_xml
 
     def _create_model(self):
-        model = self._get_base_tag()
-        hierarchy = self._create_hierarchy(self.source)
-        model.append(hierarchy)
-
-        return model
+        return self._create_hierarchy(self.source)
 
     def _write_model(self):
         """Compiles the model and writes it to the output file."""
