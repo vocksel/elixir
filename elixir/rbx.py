@@ -14,17 +14,13 @@ def is_module(path):
     with open(path) as f:
         content = f.read()
 
-    # Looks for a `return` statement at the end of the file. If it finds one,
-    # it's safe to assume that we're looking at a Lua module.
+    # Looks for a returned value at the end of the file. If it finds one, it's
+    # safe to assume that we're looking at a Lua module.
     #
-    # We're matching for any number of spaces at the end incase there are a lot
-    # of newlines at the end of the file.
-    module_return_pattern = re.compile(r"return\s+\w+\s+$")
+    # We're optionally matching any number of spaces at the end of the file
+    # incase of a final newline, or accidentally added spaces after the value.
+    return re.search(r"return\s+\S+(\s+)?$", content)
 
-    if module_return_pattern.search(content):
-        return True
-    else:
-        return False
 
 def create_item(class_name):
     # A "referent" used to be applied as an attribute, but it is no longer
