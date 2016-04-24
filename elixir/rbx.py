@@ -17,10 +17,13 @@ def is_module(path):
     # Looks for a returned value at the end of the file. If it finds one, it's
     # safe to assume that we're looking at a Lua module.
     #
+    # We match any number of whitespace after the return in case of accidental
+    # spacing on the user's part. Then we match any characters to catch both
+    # variables (`return module`) and functions (`return setmetatable(t1, t2)`)
+    #
     # We're optionally matching any number of spaces at the end of the file
     # incase of a final newline, or accidentally added spaces after the value.
-    return re.search(r"return\s+\S+(\s+)?$", content)
-
+    return re.search(r"return\s+.*(\s+)?$", content)
 
 def create_item(class_name):
     # A "referent" used to be applied as an attribute, but it is no longer
