@@ -25,7 +25,7 @@ def is_module(path):
     # incase of a final newline, or accidentally added spaces after the value.
     return re.search(r"return\s+.*(\s+)?$", content)
 
-def create_item(class_name):
+def create_item(class_name, name):
     # A "referent" used to be applied as an attribute, but it is no longer
     # needed. A referent is a sort of ID for each ROBLOX instance in the XML.
     # ROBLOX imports models just fine without them, so it's not necessary to
@@ -36,8 +36,10 @@ def create_item(class_name):
         "class": class_name
     })
 
-    # Add an empty list of properties to fill later.
-    ElementTree.SubElement(item, "Properties")
+    properties = ElementTree.SubElement(item, "Properties")
+
+    name_prop = ElementTree.SubElement(properties, "string", name="Name")
+    name_prop.text = name
 
     return item
 
@@ -59,13 +61,7 @@ class Container:
     def get_xml(self):
         """Gets the Container as XML in a ROBLOX-compatible format."""
 
-        item = create_item(self.class_name)
-        properties = item.find("Properties")
-
-        name = ElementTree.SubElement(properties, "string", name="Name")
-        name.text = self.name
-
-        return item
+        return create_item(self.class_name, self.name)
 
 class Model:
     """A ROBLOX Model file.
@@ -188,11 +184,8 @@ class Script(elixir.fs.File):
     def get_xml(self):
         """Gets the Script as XML in a ROBLOX-compatible format."""
 
-        item = create_item(self.class_name)
+        item = create_item(self.class_name, self.name)
         properties = item.find("Properties")
-
-        name = ElementTree.SubElement(properties, "string", name="Name")
-        name.text = self.name
 
         disabled = ElementTree.SubElement(properties, "bool", name="Disabled")
         disabled.text = self.disabled
