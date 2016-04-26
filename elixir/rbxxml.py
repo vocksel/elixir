@@ -8,7 +8,7 @@ def new_property(parent, prop_type, name, text):
 
     return prop
 
-def create_item(class_name, name):
+def create_instance_xml(class_name, name):
     # A "referent" used to be applied as an attribute, but it is no longer
     # needed. A referent is a sort of ID for each ROBLOX instance in the XML.
     # ROBLOX imports models just fine without them, so it's not necessary to
@@ -21,5 +21,15 @@ def create_item(class_name, name):
 
     properties = ElementTree.SubElement(item, "Properties")
     new_property(properties, prop_type="string", name="Name", text=name)
+
+    return item, properties
+
+def create_script_xml(class_name, name, source, disabled=False):
+    item, properties = create_instance_xml(class_name, name)
+
+    new_property(properties, prop_type="ProtectedString", name="Source",
+        text=source)
+
+    new_property(properties, prop_type="bool", name="Disabled", text=disabled)
 
     return item

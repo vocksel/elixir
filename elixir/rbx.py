@@ -3,7 +3,7 @@ import re
 from xml.etree import ElementTree
 
 import elixir.fs
-from elixir.rbxxml import new_property, create_item
+from elixir.rbxxml import new_property, create_instance_xml, create_script_xml
 
 def is_module(path):
     """Checks if the file is a Lua module.
@@ -44,7 +44,7 @@ class Container:
     def get_xml(self):
         """Gets the Container as XML in a ROBLOX-compatible format."""
 
-        return create_item(self.class_name, self.name)
+        return create_instance_xml(self.class_name, self.name)
 
 class Model:
     """A ROBLOX Model file.
@@ -167,12 +167,5 @@ class Script(elixir.fs.File):
     def get_xml(self):
         """Gets the Script as XML in a ROBLOX-compatible format."""
 
-        item = create_item(self.class_name, self.name)
-        properties = item.find("Properties")
-
-        new_property(properties, prop_type="bool", name="Disabled",
-            text=self.disabled)
-        new_property(properties, prop_type="ProtectedString", name="Source",
-            text=self.source)
-
-        return item
+        return create_script_xml(self.class_name, self.name, self.source,
+            self.disabled)
