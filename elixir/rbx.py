@@ -3,6 +3,7 @@ import re
 from xml.etree import ElementTree
 
 import elixir.fs
+from elixir.rbxxml import new_property, create_item
 
 def is_module(path):
     """Checks if the file is a Lua module.
@@ -24,28 +25,6 @@ def is_module(path):
     # We're optionally matching any number of spaces at the end of the file
     # incase of a final newline, or accidentally added spaces after the value.
     return re.search(r"return\s+.*(\s+)?$", content)
-
-def new_property(parent, prop_type, name, text):
-    prop = ElementTree.SubElement(parent, prop_type, name=name)
-    prop.text = text
-
-    return prop
-
-def create_item(class_name, name):
-    # A "referent" used to be applied as an attribute, but it is no longer
-    # needed. A referent is a sort of ID for each ROBLOX instance in the XML.
-    # ROBLOX imports models just fine without them, so it's not necessary to
-    # include.
-    item = ElementTree.Element("Item", attrib={
-        # `class` is a reserved keyword so we have to pass it in through this
-        # dict rather than as a named parameter.
-        "class": class_name
-    })
-
-    properties = ElementTree.SubElement(item, "Properties")
-    new_property(properties, prop_type="string", name="Name", text=name)
-
-    return item
 
 class Container:
     """Acts as a directory in the ROBLOX hierarchy.
