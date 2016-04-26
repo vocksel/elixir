@@ -25,6 +25,12 @@ def is_module(path):
     # incase of a final newline, or accidentally added spaces after the value.
     return re.search(r"return\s+.*(\s+)?$", content)
 
+def new_property(parent, prop_type, name, text):
+    prop = ElementTree.SubElement(parent, prop_type, name=name)
+    prop.text = text
+
+    return prop
+
 def create_item(class_name, name):
     # A "referent" used to be applied as an attribute, but it is no longer
     # needed. A referent is a sort of ID for each ROBLOX instance in the XML.
@@ -37,9 +43,7 @@ def create_item(class_name, name):
     })
 
     properties = ElementTree.SubElement(item, "Properties")
-
-    name_prop = ElementTree.SubElement(properties, "string", name="Name")
-    name_prop.text = name
+    new_property(properties, prop_type="string", name="Name", text=name)
 
     return item
 
@@ -187,11 +191,9 @@ class Script(elixir.fs.File):
         item = create_item(self.class_name, self.name)
         properties = item.find("Properties")
 
-        disabled = ElementTree.SubElement(properties, "bool", name="Disabled")
-        disabled.text = self.disabled
-
-        source = ElementTree.SubElement(properties, "ProtectedString",
-            name="Source")
-        source.text = self.source
+        new_property(properties, prop_type="bool", name="Disabled",
+            text=self.disabled)
+        new_property(properties, prop_type="ProtectedString", name="Source",
+            text=self.source)
 
         return item
