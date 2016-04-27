@@ -26,25 +26,36 @@ def is_module(path):
     # incase of a final newline, or accidentally added spaces after the value.
     return re.search(r"return\s+.*(\s+)?$", content)
 
-class Container:
-    """Acts as a directory in the ROBLOX hierarchy.
+class Instance:
+    def __init__(self, class_name, name=None):
+        # ROBLOX uses the class of the instance for its name so we're doing the
+        # same here.
+        name = name or class_name
 
-    name="Folder" : str
-        The name of the container in the ROBLOX hierarchy.
-    class_name="Folder" : str
-        This is the name of a ROBLOX class that will be used to contain scripts
-        and models. This can be any one of ROBLOX's classes, but it's
-        recommended to use a Folder.
-    """
+        xml, xml_properties = create_instance_xml(class_name, name)
 
-    def __init__(self, name="Folder", class_name="Folder"):
-        self.name = name
         self.class_name = class_name
+        self.name = name
+        self.xml = xml
+        self.xml_properties = xml_properties
 
     def get_xml(self):
-        """Gets the Container as XML in a ROBLOX-compatible format."""
+        """Gets the instance's XML for the ROBLOX model.
 
-        return create_instance_xml(self.class_name, self.name)
+        This is for backwards compatibility. You should use the `xml` property
+        in new code.
+        """
+        return self.xml
+
+class Container(Instance):
+    """A class to represent filesystem directories in-game.
+
+    name=None : str
+        The name of the Container in-game.
+    """
+
+    def __init__(self, name=None):
+        super().__init__("Folder", name)
 
 class Model:
     """A ROBLOX Model file.
