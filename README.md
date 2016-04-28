@@ -123,31 +123,19 @@ example, if you had a project setup like this on your computer:
 
 ```
 src/
-  Model.rbxmx
-  AnotherScript.lua
-  Script.lua
+  Code/
+    AnotherScript.lua
+    Script.lua
+    Model.rbxmx
 ```
 
 And the in-game contents of `Model.rbxmx` were:
 
-```
-Model/
-  Part
-  Part
-Part
-```
+![An in-game screenshot of the contents of Model.rbxmx](screenshots/example-model-contents.png)
 
 It would look like this in-game:
 
-```
-src/
-  Model/
-    Part
-    Part
-  Part
-  AnotherScript
-  Script
-```
+![An in-game screenshot of the compiled source code and Model.rbxmx](screenshots/example-compiled-source.png)
 
 ## Processors
 
