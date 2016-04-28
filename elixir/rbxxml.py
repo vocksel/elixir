@@ -5,8 +5,8 @@ from xml.etree import ElementTree
 def convert_bool(b):
     """Converts Python bool values to Lua's.
 
-    This is used when inserting bool values in the XML. Lua's bool values are
-    all lowercase
+    Before we can insert a bool value in the XML, it must first be converted to
+    a string and then lowercased to match Lua's bool values.
     """
     return str(b).lower()
 
