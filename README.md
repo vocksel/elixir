@@ -189,8 +189,6 @@ legacy support. The last version supported by this processor can be found
 A processor for [NevermoreEngine](https://github.com/Quenty/NevermoreEngine), a
 project by Quenty to help you structure your game.
 
-Example usage at [examples/nevermore](examples/nevermore).
-
 - Overrides `model_name` to `Nevermore`. Nevermore internally references itself
   at `ServerScriptService.Nevermore`, so we need to ensure it's going by the
   correct name, otherwise it will error.
