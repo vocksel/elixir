@@ -25,6 +25,12 @@ def create_instance_xml(class_name, name):
     return item, properties
 
 def create_script_xml(class_name, name, source, disabled=False):
+    # This is a bool value and must be converted to a string so that it can
+    # be written as XML.
+    #
+    # It must also be lowercased to match ROBLOX's bool values.
+    disabled = str(disabled).lower()
+
     item, properties = create_instance_xml(class_name, name)
 
     new_property(properties, prop_type="ProtectedString", name="Source",
