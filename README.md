@@ -171,14 +171,10 @@ guard.
 This is the default processor class that Elixir uses. All other processors
 should inherit from it.
 
-
-- All folders are compiled to `Folders`.
-- All Lua files are compiled to `Scripts`.
+- All folders are compiled to ROBLOX `Folder` instances.
+- All Lua files are compiled to ROBLOX `Script` instances.
 - All ROBLOX XML models are unpacked at their position in the hierarchy. See
   [Importing Models](#importing-models) for more details.
-
-Note that the classes mentioned are the in-game ones that ROBLOX uses, we're not
-referring to the custom Python classes in `elixir.rbx`.
 
 ### elixir.processors.NevermoreProcessor (Legacy)
 
