@@ -1,5 +1,5 @@
-# Temporarily ignoring tests
-tests/
+# py.test
+.cache/
 
 # Ignore any compiled model files
 *.rbxmx

@@ -3,7 +3,7 @@ import re
 from xml.etree import ElementTree
 
 import elixir.fs
-from elixir.rbxxml import new_property, create_instance_xml, create_script_xml
+from elixir.rbxxml import InstanceElement, ScriptElement
 
 def is_module(path):
     """Checks if the file is a Lua module.
@@ -32,12 +32,9 @@ class Instance:
         # same here.
         name = name or class_name
 
-        xml, xml_properties = create_instance_xml(class_name, name)
-
         self.class_name = class_name
         self.name = name
-        self.xml = xml
-        self.xml_properties = xml_properties
+        self.instance = InstanceElement(class_name, name)
 
     def get_xml(self):
         """Gets the instance's XML for the ROBLOX model.
@@ -45,7 +42,7 @@ class Instance:
         This is for backwards compatibility. You should use the `xml` property
         in new code.
         """
-        return self.xml
+        return self.instance.element
 
 class Container(Instance):
     """A class to represent filesystem directories in-game.
@@ -107,10 +104,15 @@ class Script(elixir.fs.File):
         filename = os.path.basename(path)
         name = os.path.splitext(filename)[0]
 
-        self.name = properties.get("Name") or name
-        self.class_name = properties.get("ClassName") or class_name
-        self.source = self.read()
+        class_name = properties.get("ClassName") or class_name
+        name = properties.get("Name") or name
+        source = self.read()
+
+        self.class_name = class_name
+        self.name = name
+        self.source = source
         self.disabled = disabled
+        self.instance = ScriptElement(class_name, name, source, disabled)
 
     def _get_first_comment(self):
         """Gets the first comment in a Lua file.
@@ -172,5 +174,4 @@ class Script(elixir.fs.File):
     def get_xml(self):
         """Gets the Script as XML in a ROBLOX-compatible format."""
 
-        return create_script_xml(self.class_name, self.name, self.source,
-            self.disabled)
+        return self.instance.element
