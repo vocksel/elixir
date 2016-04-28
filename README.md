@@ -62,7 +62,9 @@ into your game.
 
 - **_dest_**: The name of the file that will be created when compiling.
 
-  Directories in this path are automatically created for you.
+  Directories in this path are automatically created for you. For example, if
+  you set this to `build/model.rbxmx`, the `build/` directory will be created if
+  it doesn't already exist.
 
   It's important that the file extension should either be `.rbxmx` or `.rbxm`.
   Those are the two filetypes recognized by ROBLOX Studio. You won't be able to
