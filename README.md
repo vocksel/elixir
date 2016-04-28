@@ -68,29 +68,9 @@ into your game.
   Those are the two filetypes recognized by ROBLOX Studio. You won't be able to
   import the file into your game otherwise.
 
-- **_model_name=None_**: This is the name of the top-most folder that contains
-  all of your source code in-game.
-
-  By default, it will use the name of `source`. For example, if this points to
-  the `src/` directory, that will be the name that appears in-game. It's common
-  to change this to the name of your project.
-
 - **_processor=BaseProcessor_**: The processor to use when compiling. A
   processor is what handles files and folders as the compiler comes across them.
   It dictates the type of ROBLOX class is returned.
-
-**Example usage:**
-
-```python
-from elixir.compilers import ModelCompiler
-
-source = "source/"
-dest = "build.rbxmx"
-model_name = "Project"
-
-compiler = ModelCompiler(source, dest, model_name=model_name)
-compiler.compile()
-```
 
 ## Properties
 
@@ -193,8 +173,8 @@ compiler = ModelCompiler(source, dest, processor=NevermoreProcessor)
 compiler.compile()
 ```
 
-When you're using a processor, be sure to read over everything it does. They
-can compile things in unexpected ways, and override the `model_name` parameter.
+Be sure to read over everything a processor does so you don't get caught off
+guard.
 
 ### elixir.processors.BaseProcessor
 
