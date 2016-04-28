@@ -53,10 +53,6 @@ class PropertyElement(CustomSubElement):
     def __init__(self, parent):
         super().__init__(parent, "Properties")
 
-        # I don't actually think I want to use SubElement at all. This makes it
-        # tricker to test, as whenever I want to test this class I also need a
-        # CustomElement to parent it to.
-
     def add(self, tag, name, text):
         """Add a new property.
 
