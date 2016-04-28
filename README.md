@@ -97,6 +97,7 @@ List of properties:
   file name).
 - **ClassName**: This can be any one of ROBLOX's Script instances (defaults to
   `Script`).
+- **Disabled**: Controls the Script's in-game `Disabled` property. You can set this to `true` or `false`.
 
 ## Modules
 
