@@ -18,6 +18,8 @@ def sanitize(content):
 
     if type(content) == bool:
         return convert_bool(content)
+    else:
+        return content
 
 def tostring(element):
     """A more specialized version of ElementTree's `tostring`.

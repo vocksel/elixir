@@ -38,6 +38,14 @@ class TestSanitization:
     def test_is_converting_bools(self):
         assert type(sanitize(True)) is str
 
+    def test_is_returning_same_content_if_not_sanitize(self):
+        # As of writing this, strings do not get sanitized in any way. If this
+        # changes in the future this test will fail.
+        content = "Hello, World!"
+        sanitized_content = sanitize(content)
+
+        assert content == sanitized_content
+
 class TestElementToStringConversion:
     def test_is_not_output_as_bytestring(self):
         item = _new_item()
