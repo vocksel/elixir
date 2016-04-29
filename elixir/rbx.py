@@ -3,7 +3,7 @@ import re
 from xml.etree import ElementTree
 
 import elixir.fs
-from elixir.rbxxml import InstanceElement, ScriptElement
+from elixir.rbxmx import InstanceElement, ScriptElement
 
 def is_module(path):
     """Checks if the file is a Lua module.

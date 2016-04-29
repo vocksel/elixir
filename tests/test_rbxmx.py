@@ -1,4 +1,4 @@
-from elixir.rbxxml import *
+from elixir.rbxmx import *
 
 """Tests for ROBLOX-related XML generation."""
 
