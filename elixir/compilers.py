@@ -104,6 +104,15 @@ class ModelCompiler(BaseCompiler):
             elif extension == ".rbxmx":
                 return self.processor.process_model(path)
 
+    def _import_model(self, hierarchy, model_xml):
+        # We need to use some special handling when we encounter a model. Models
+        # have their own <roblox> tag which we need to skip when importing.
+        #
+        # All we're looking for is the Model's elements, so we loop over the XML
+        # and import them that way.
+        for item in model_xml:
+            hierarchy.append(item)
+
     def _create_hierarchy(self, path):
         """Turns a directory structure into ROBLOX-compatible XML.
 
@@ -121,14 +130,7 @@ class ModelCompiler(BaseCompiler):
                 element_xml = element.get_xml()
 
                 if isinstance(element, Model):
-                    # We need to use some special handling when we encounter a
-                    # model. Models have their own <roblox> tag which we need to
-                    # skip when importing.
-                    #
-                    # All we're looking for is the Model's elements, so we loop
-                    # over the XML and import them that way.
-                    for item in element_xml:
-                        hierarchy.append(item)
+                    self._import_model(element_xml)
                 else:
                     hierarchy.append(element_xml)
 
