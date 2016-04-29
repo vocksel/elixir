@@ -87,3 +87,16 @@ class TestScriptElement:
         expected_xml = "<ProtectedString name=\"Source\"></ProtectedString>"
 
         assert tostring(script.source) == expected_xml
+
+    def test_can_have_source(self):
+        script = ScriptElement("Script", source="print(\"Hello, World!\")")
+        expected_xml = "<ProtectedString name=\"Source\">print(\"Hello, " \
+            "World!\")</ProtectedString>"
+
+        assert tostring(script.source) == expected_xml
+
+    def test_can_have_varied_class_name(self):
+        for script_class in [ "Script", "LocalScript", "ModuleScript" ]:
+            script = ScriptElement(script_class)
+
+            assert script.element.get("class") == script_class
