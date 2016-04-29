@@ -20,14 +20,19 @@ def sanitize(content):
         return convert_bool(content)
 
 def tostring(element):
-    # We're using Unicode encoding so that this returns a string, instead of
-    # the default bytestring.
-    #
-    # We're also setting short_empty_elements to `False` so that all
-    # elements are output with their ending tags. This is only required when
-    # _writing_ the XML, as ROBLOX won't import the file it there are any
-    # self-closing tags. This is done here so when the Element is turned
-    # into a string, it is consistent with what it will be written as.
+    """A more specialized version of ElementTree's `tostring`.
+
+    We're using Unicode encoding so that this returns a string, instead of the
+    default bytestring.
+
+    We're also setting `short_empty_elements` to `False` so that all elements
+    are output with their ending tags. This is only required when _writing_ the
+    XML, as ROBLOX won't import the file if there are any self-closing tags.
+
+    This isn't used for writing, so while this isn't mandatory, it's done here
+    so the string version of the XML is consistent with what gets written.
+    """
+
     return ElementTree.tostring(element, encoding="unicode",
         short_empty_elements=False)
 
