@@ -89,7 +89,8 @@ class InstanceElement:
         self.name = self.properties.add("string", "Name", name)
 
 class ScriptElement(InstanceElement):
-    def __init__(self, class_name, name=None, source=None, disabled=False):
+    def __init__(self, class_name="Script", name=None, source=None,
+        disabled=False):
         super().__init__(class_name, name)
 
         self.source = self.properties.add("ProtectedString", "Source", source)
