@@ -34,6 +34,10 @@ class TestBoolConversion:
     def test_bool_is_lowecased(self):
         assert convert_bool(True).islower() == True
 
+class TestSanitization:
+    def test_is_converting_bools(self):
+        assert type(sanitize(True)) is str
+
 class TestElementToStringConversion:
     def test_is_not_output_as_bytestring(self):
         item = _new_item()
