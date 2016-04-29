@@ -10,40 +10,19 @@ def convert_bool(b):
     """
     return str(b).lower()
 
-class CustomElement:
-    """An extension of the Element class.
+def tostring(element):
+    # We're using Unicode encoding so that this returns a string, instead of
+    # the default bytestring.
+    #
+    # We're also setting short_empty_elements to `False` so that all
+    # elements are output with their ending tags. This is only required when
+    # _writing_ the XML, as ROBLOX won't import the file it there are any
+    # self-closing tags. This is done here so when the Element is turned
+    # into a string, it is consistent with what it will be written as.
+    return ElementTree.tostring(element, encoding="unicode",
+        short_empty_elements=False)
 
-    Element raises an AttributeError when we try to set anything on `self`,
-    because of this we're _implementing_ it as a property, as opposed to
-    inheriting from it directly.
-    """
-
-    def __init__(self, *args, **kwargs):
-        self.element = ElementTree.Element(*args, **kwargs)
-
-    def __repr__(self):
-        # We're using Unicode encoding so that this returns a string, instead of
-        # the default bytestring.
-        #
-        # We're also setting short_empty_elements to `False` so that all
-        # elements are output with their ending tags. This is only required when
-        # _writing_ the XML, as ROBLOX won't import the file it there are any
-        # self-closing tags. This is done here so when the Element is turned
-        # into a string, it is consistent with what it will be written as.
-        return ElementTree.tostring(self.element, encoding="unicode",
-            short_empty_elements=False)
-
-class CustomSubElement(CustomElement):
-    """Customized SubElement.
-
-    This is purely just to inherit all of CustomElement's attributes so that
-    SubElements can be converted to strings the same way that Elements can.
-    """
-
-    def __init__(self, *args, **kwargs):
-        self.element = ElementTree.SubElement(*args, **kwargs)
-
-class PropertyElement(CustomSubElement):
+class PropertyElement:
     """Container for the properties of InstanceElement.
 
     This stores things like the Instance's in-game name, and for Scripts it can
@@ -51,7 +30,7 @@ class PropertyElement(CustomSubElement):
     """
 
     def __init__(self, parent):
-        super().__init__(parent, "Properties")
+        self.element = ElementTree.SubElement(parent, "Properties")
 
     def add(self, tag, name, text):
         """Add a new property.
@@ -64,12 +43,12 @@ class PropertyElement(CustomSubElement):
             a name of "Disabled" for the Disabled property of a Script.
         """
 
-        prop = CustomSubElement(self.element, tag, name=name)
-        prop.element.text = text
+        prop = ElementTree.SubElement(self.element, tag, name=name)
+        prop.text = text
 
         return prop
 
-class InstanceElement(CustomElement):
+class InstanceElement:
     """Acts as an XML implementation of ROBLOX's Instance class.
 
     This class is intended to be very barebones, you will typically only use it
@@ -88,7 +67,7 @@ class InstanceElement(CustomElement):
 
         # `class` is a reserved keyword so we have to pass it in through
         # `attrib` rather than as a named parameter.
-        super().__init__("Item", attrib={"class": class_name})
+        self.element = ElementTree.Element("Item", attrib={"class": class_name})
 
         self.properties = PropertyElement(self.element)
         self.name = self.properties.add("string", "Name", name)

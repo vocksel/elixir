@@ -16,6 +16,15 @@ end
 return module
 """
 
+def _new_item(class_name=None):
+    """Helper function for creating new `Item` Elements.
+
+    This is used until we get to InstanceElement, where we then use that class
+    for all of the elements instead instead.
+    """
+    class_name = class_name or "Folder"
+    return ElementTree.Element("Item", attrib={ "class": class_name })
+
 class TestBoolConversion:
     # I know the name sounds silly, but the function is used for putting bool
     # values into the XML, so it has to convert them into strings.
@@ -25,20 +34,20 @@ class TestBoolConversion:
     def test_bool_is_lowecased(self):
         assert convert_bool(True).islower() == True
 
-class TestCustomElement:
+class TestElementToStringConversion:
     def test_is_not_output_as_bytestring(self):
-        item = CustomElement("Item")
-        assert str(item) is not bytes
+        item = _new_item()
+        assert tostring(item) is not bytes
 
     def test_is_converting_to_string_properly(self):
-        item = CustomElement("Item", attrib={"class": "Folder"})
+        item = _new_item()
         expected_xml = "<Item class=\"Folder\"></Item>"
-        assert str(item) == expected_xml
+        assert tostring(item) == expected_xml
 
 class TestPropertyElement:
     def test_can_add_properties(self):
-        instance = CustomElement("Item")
-        properties = PropertyElement(instance.element)
+        item = _new_item()
+        properties = PropertyElement(item)
         properties.add(tag="string", name="Property", text="Value")
         prop = properties.element.find("*[@name='Property']")
 
@@ -56,7 +65,7 @@ class TestInstanceElement:
 
     def test_name_matches_class_name_by_default(self):
         class_name = self.element.get("class")
-        name = self.instance.name.element.text
+        name = self.instance.name.text
         assert class_name == name
 
     def test_has_properties(self):
@@ -69,11 +78,12 @@ class TestScriptElement:
     properties = instance.properties
 
     def test_disabled_is_converted_properly(self):
-        disabled = self.instance.disabled.element
+        script = ScriptElement("")
+        disabled = self.instance.disabled
         assert disabled.text == "true"
 
     def test_source_can_be_blank(self):
         script = ScriptElement("Script")
         expected_xml = "<ProtectedString name=\"Source\"></ProtectedString>"
 
-        assert str(script.source) == expected_xml
+        assert tostring(script.source) == expected_xml
