@@ -95,3 +95,11 @@ class ScriptElement(InstanceElement):
 
         self.source = self.properties.add("ProtectedString", "Source", source)
         self.disabled = self.properties.add("bool", "Disabled", disabled)
+
+class ContainerElement(InstanceElement):
+    def __init__(self, class_name="Folder", name=None):
+        super().__init__(class_name, name)
+
+class ModelElement:
+    def __init__(self, content):
+        self.element = ElementTree.XML(content)
