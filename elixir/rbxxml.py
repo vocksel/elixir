@@ -10,6 +10,15 @@ def convert_bool(b):
     """
     return str(b).lower()
 
+def sanitize(content):
+    """Makes sure `content` is safe to go in the XML.
+
+    This is mostly for converting Python types into something XML compatible.
+    """
+
+    if type(content) == bool:
+        return convert_bool(content)
+
 def tostring(element):
     # We're using Unicode encoding so that this returns a string, instead of
     # the default bytestring.
@@ -44,7 +53,7 @@ class PropertyElement:
         """
 
         prop = ElementTree.SubElement(self.element, tag, name=name)
-        prop.text = text
+        prop.text = sanitize(text)
 
         return prop
 
@@ -74,10 +83,6 @@ class InstanceElement:
 
 class ScriptElement(InstanceElement):
     def __init__(self, class_name, name=None, source=None, disabled=False):
-        # We need to convert `disabled` to a string so it can be used in the
-        # XML. It must also be lowercased to match ROBLOX's bool values.
-        disabled = str(disabled).lower()
-
         super().__init__(class_name, name)
 
         self.source = self.properties.add("ProtectedString", "Source", source)
