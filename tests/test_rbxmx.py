@@ -46,6 +46,17 @@ class TestSanitization:
 
         assert content == sanitized_content
 
+class TestModuleRecognition:
+    content = "return value"
+
+    def test_matches_module_with_excess_newlines(self):
+        content = self.content + "\n\n\n\n"
+        assert is_module(content)
+
+    def test_matches_function_as_return_value(self):
+        content = "return setmetatable(module, mt)"
+        assert is_module(content)
+
 class TestElementToStringConversion:
     def test_is_not_output_as_bytestring(self):
         item = _new_item()

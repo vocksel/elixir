@@ -1,3 +1,4 @@
+import re
 from xml.etree import ElementTree
 
 """Functions for creating ROBLOX instances in XML"""
@@ -20,6 +21,24 @@ def sanitize(content):
         return convert_bool(content)
     else:
         return content
+
+def is_module(content):
+    """Checks if the contents are from a Lua module.
+
+    It looks for a returned value at the end of the file. If it finds one, it's
+    safe to assume that it's a module.
+
+    content : str
+        The Lua source code to check.
+    """
+
+    # We match any number of whitespace after the return in case of accidental
+    # spacing on the user's part. Then we match any characters to catch both
+    # variables (`return module`) and functions (`return setmetatable(t1, t2)`)
+    #
+    # We're optionally matching any number of spaces at the end of the file
+    # incase of a final newline, or accidentally added spaces after the value.
+    return re.search(r"return\s+.*(\s+)?$", content)
 
 def tostring(element):
     """A more specialized version of ElementTree's `tostring`.

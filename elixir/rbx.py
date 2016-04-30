@@ -5,24 +5,6 @@ from xml.etree import ElementTree
 import elixir.fs
 from elixir.rbxmx import InstanceElement, ScriptElement
 
-def is_module(content):
-    """Checks if the contents are from a Lua module.
-
-    content : str
-        The Lua source code to check.
-    """
-
-    # Looks for a returned value at the end of the file. If it finds one, it's
-    # safe to assume that we're looking at a Lua module.
-    #
-    # We match any number of whitespace after the return in case of accidental
-    # spacing on the user's part. Then we match any characters to catch both
-    # variables (`return module`) and functions (`return setmetatable(t1, t2)`)
-    #
-    # We're optionally matching any number of spaces at the end of the file
-    # incase of a final newline, or accidentally added spaces after the value.
-    return re.search(r"return\s+.*(\s+)?$", content)
-
 class Instance:
     def __init__(self, class_name, name=None):
         # ROBLOX uses the class of the instance for its name so we're doing the

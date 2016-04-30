@@ -1,6 +1,5 @@
 import os.path
 
-from elixir.rbx import is_module
 from elixir import rbxmx
 
 class BaseProcessor:
@@ -41,7 +40,7 @@ class BaseProcessor:
             The Lua source code.
         """
 
-        if is_module(content):
+        if rbxmx.is_module(content):
             return rbxmx.ScriptElement("ModuleScript", name=name,
                 source=content)
         else:
