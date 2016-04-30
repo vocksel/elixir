@@ -76,6 +76,15 @@ class TestPropertyElement:
 
         assert prop.text == "Value"
 
+    def test_can_get_properties_by_name(self):
+        item = _new_item()
+        properties = PropertyElement(item)
+        properties.add(tag="string", name="Name", text="Property")
+
+        prop = properties.get("Name")
+
+        assert prop.text == "Property"
+
 class TestInstanceElement:
     instance = InstanceElement("Folder")
     element = instance.element

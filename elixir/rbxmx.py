@@ -83,6 +83,9 @@ class PropertyElement:
 
         return prop
 
+    def get(self, name):
+        return self.element.find("*[@name='{}']".format(name))
+
 class InstanceElement:
     """Acts as an XML implementation of ROBLOX's Instance class.
 
