@@ -93,16 +93,18 @@ class ModelCompiler(BaseCompiler):
             The path to a folder or file to be processed by the engine.
         """
 
-        filename = os.path.basename(path)
-        extension = os.path.splitext(filename)[1]
+        name, extension = os.path.splitext(os.path.basename(path))
 
         if os.path.isdir(path):
-            return self.processor.process_folder(path)
+            return self.processor.process_folder(name)
         elif os.path.isfile(path):
+            with open(path) as f:
+                content = f.read()
+
             if extension == ".lua":
-                return self.processor.process_script(path)
+                return self.processor.process_script(name, content)
             elif extension == ".rbxmx":
-                return self.processor.process_model(path)
+                return self.processor.process_model(content)
 
     def _import_model(self, hierarchy, model_xml):
         # We need to use some special handling when we encounter a model. Models
@@ -126,16 +128,15 @@ class ModelCompiler(BaseCompiler):
             for item in os.listdir(path):
                 item_path = os.path.join(path, item)
 
-                element = self._get_element(item_path)
-                element_xml = element.get_xml()
+                element = self._get_element(item_path).element
 
                 if isinstance(element, Model):
-                    self._import_model(element_xml)
+                    self._import_model(element)
                 else:
-                    hierarchy.append(element_xml)
+                    hierarchy.append(element)
 
                 if os.path.isdir(item_path):
-                    recurse(item_path, element_xml)
+                    recurse(item_path, element)
 
         recurse(path, root_xml)
 

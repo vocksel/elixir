@@ -5,15 +5,12 @@ from xml.etree import ElementTree
 import elixir.fs
 from elixir.rbxmx import InstanceElement, ScriptElement
 
-def is_module(path):
-    """Checks if the file is a Lua module.
+def is_module(content):
+    """Checks if the contents are from a Lua module.
 
-    path : str
-        The path to a Lua file.
+    content : str
+        The Lua source code to check.
     """
-
-    with open(path) as f:
-        content = f.read()
 
     # Looks for a returned value at the end of the file. If it finds one, it's
     # safe to assume that we're looking at a Lua module.

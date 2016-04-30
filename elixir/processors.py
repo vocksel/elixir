@@ -1,6 +1,7 @@
 import os.path
 
-from elixir.rbx import is_module, Container, Model, Script
+from elixir.rbx import is_module
+from elixir import rbxmx
 
 class BaseProcessor:
     """The primary processor class.
@@ -13,30 +14,38 @@ class BaseProcessor:
     these instances is then appended into the hierarchy when compiling.
     """
 
-    def process_folder(self, path):
+    def process_folder(self, name):
         """Processing for folders in the source directory.
 
-        path : str
-            The path to a folder.
+        name : str
+            The name of the folder to process. Excluding the extension.
         """
 
-        folder_name = os.path.basename(path)
-        return Container(folder_name)
+        return rbxmx.ContainerElement(name=name)
 
-    def process_model(self, path):
-        return Model(path)
+    def process_model(self, content):
+        """Processing for ROBLOX Model files (.rbxmx).
 
-    def process_script(self, path):
+        content : str
+            The contents of the Model file.
+        """
+
+        return rbxmx.ModelElement(content)
+
+    def process_script(self, name, content):
         """Processing for Lua files in the source directory.
 
-        path : str
-            The path to a Lua file.
+        name : str
+            The name of the Script.
+        content : str
+            The Lua source code.
         """
 
-        if is_module(path):
-            return Script(path, class_name="ModuleScript")
+        if is_module(content):
+            return rbxmx.ScriptElement("ModuleScript", name=name,
+                source=content)
         else:
-            return Script(path)
+            return rbxmx.ScriptElement(name=name, source=content)
 
 class NevermoreProcessor(BaseProcessor):
     """Processor for NevermoreEngine (Legacy).
@@ -49,11 +58,10 @@ class NevermoreProcessor(BaseProcessor):
     https://github.com/Quenty/NevermoreEngine/tree/b9b5a836e4b5801ba19abfa2a5eab79921076542
     """
 
-    def process_script(self, path):
-        filename = os.path.basename(path)
-        if filename == "NevermoreEngineLoader.lua":
-            return Script(path)
-        elif ".main" in filename.lower():
-            return Script(path, disabled=True)
+    def process_script(self, name, content):
+        if name == "NevermoreEngineLoader":
+            return rbxmx.ScriptElement(name=name, source=content)
+        elif ".main" in name.lower():
+            return rbxmx.ScriptElement(name=name, source=content, disabled=True)
         else:
-            return Script(path, class_name="ModuleScript")
+            return rbxmx.ScriptElement("ModuleScript", name=name, source=content)
