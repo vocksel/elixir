@@ -96,17 +96,12 @@ class TestInstanceElement:
         assert properties
 
 class TestScriptElement:
-    instance = ScriptElement("Script", None, SCRIPT_SOURCE, True)
-    element = instance.element
-    properties = instance.properties
-
     def test_disabled_is_converted_properly(self):
-        script = ScriptElement("")
-        disabled = self.instance.disabled
-        assert disabled.text == "true"
+        script = ScriptElement("Script", disabled=True)
+        assert script.disabled.text == "true"
 
     def test_source_can_be_blank(self):
-        script = ScriptElement("Script")
+        script = ScriptElement("Script", source=None)
         expected_xml = "<ProtectedString name=\"Source\"></ProtectedString>"
 
         assert tostring(script.source) == expected_xml
