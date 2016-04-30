@@ -2,7 +2,7 @@ import os
 import os.path
 from xml.etree import ElementTree
 
-from elixir.rbx import Container, Model
+from elixir import rbxmx
 from elixir.processors import BaseProcessor
 
 def create_path(path):
@@ -112,7 +112,7 @@ class ModelCompiler(BaseCompiler):
         #
         # All we're looking for is the Model's elements, so we loop over the XML
         # and import them that way.
-        for item in model_xml:
+        for item in list(model_xml):
             hierarchy.append(item)
 
     def _create_hierarchy(self, path):
@@ -128,15 +128,16 @@ class ModelCompiler(BaseCompiler):
             for item in os.listdir(path):
                 item_path = os.path.join(path, item)
 
-                element = self._get_element(item_path).element
+                element = self._get_element(item_path)
+                xml = element.element
 
-                if isinstance(element, Model):
-                    self._import_model(element)
+                if isinstance(element, rbxmx.ModelElement):
+                    self._import_model(hierarchy, xml)
                 else:
-                    hierarchy.append(element)
+                    hierarchy.append(xml)
 
                 if os.path.isdir(item_path):
-                    recurse(item_path, element)
+                    recurse(item_path, xml)
 
         recurse(path, root_xml)
 
