@@ -3,6 +3,16 @@ from xml.etree import ElementTree
 
 """Functions for creating ROBLOX instances in XML"""
 
+def _is_lua_comment(line):
+    """Checks if `line` is a Lua comment.
+
+    line : str
+        A line from some Lua source code.
+    """
+
+    # Matching spaces so that we don't pick up block comments (--[[ ]])
+    return re.match(r"^--\s+", line)
+
 def convert_bool(b):
     """Converts Python bool values to Lua's.
 
@@ -86,6 +96,11 @@ class PropertyElement:
     def get(self, name):
         return self.element.find("*[@name='{}']".format(name))
 
+    def set(self, name, newValue):
+        prop = self.get(name)
+        if prop is not None:
+            prop.text = newValue
+
 class InstanceElement:
     """Acts as an XML implementation of ROBLOX's Instance class.
 
@@ -117,6 +132,92 @@ class ScriptElement(InstanceElement):
 
         self.source = self.properties.add("ProtectedString", "Source", source)
         self.disabled = self.properties.add("bool", "Disabled", disabled)
+
+    def get_first_comment(self):
+        """Gets the first comment in the source.
+
+        This only applie to the first _inline_ comment (the ones started with
+        two dashes), block comments are not picked up.
+
+        This is used by get_embedded_properties() to parse the comment for
+        properties to override the defaults.
+        """
+
+        source = self.source.text
+
+        if not source: return
+
+        found_first_comment = False
+        comment_lines = []
+
+        # NOTE: This way of searching for comments does not work when dealing
+        # with a source file with no newlines (eg "-- ClassName: LocalScript").
+        # While this is extremely unlikely to ever happen, we should still
+        # account for it.
+        for line in source.splitlines():
+            is_comment = _is_lua_comment(line)
+            if is_comment:
+                found_first_comment = True
+                comment_lines.append(line)
+
+            # The first comment ended, time to break out
+            elif not is_comment and found_first_comment:
+                break
+
+        if comment_lines:
+            return "\n".join(comment_lines)
+
+    def get_embedded_properties(self):
+        """Gets properties that are embedded in the source.
+
+        When working on the filesystem, there is no Properties panel like you
+        would find in ROBLOX Studio. To make up for this, properties can be
+        defined using inline comments at the top of your Lua files.
+
+        If this instance had the following source:
+
+            -- Name: HelloWorld
+            -- ClassName: LocalScript
+
+            local function hello()
+              return "Hello, World!"
+            end
+
+        Running this method will return a dict of:
+
+            { "Name": "HelloWorld", "ClassName": "LocalScript" }
+        """
+
+        comment = self.get_first_comment()
+
+        # If there's no comment then there won't be any embedded properties. No
+        # need to continue from here.
+        if not comment: return
+
+        # For `name` we only need to match whole words, as ROBLOX's
+        # properties don't have any special characters. `value` on the other
+        # hand can use any character.
+        property_pattern = re.compile(r"(?P<name>\w+):\s+(?P<value>.+)")
+
+        property_list = {}
+
+        for match in property_pattern.finditer(comment):
+            property_list[match.group("name")] = match.group("value")
+
+        return property_list
+
+    def use_embedded_properties(self):
+        """Overrides the current properties with any embedded ones."""
+
+        properties = self.get_embedded_properties()
+
+        if not properties: return
+
+        for prop_name, prop_value in properties.items():
+            if prop_name == "ClassName":
+                self.element.set("class", prop_value)
+            else:
+                self.properties.set(prop_name, prop_value)
 
 class ContainerElement(InstanceElement):
     def __init__(self, class_name="Folder", name=None):

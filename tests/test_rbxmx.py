@@ -1,10 +1,12 @@
+from textwrap import dedent
+
 from elixir.rbxmx import *
 
 """Tests for ROBLOX-related XML generation."""
 
-SCRIPT_SOURCE = """
+SCRIPT_SOURCE = """\
 -- Name: Hello
--- ClassName: LocalScript
+-- ClassName: ModuleScript
 
 local module = {}
 
@@ -85,6 +87,16 @@ class TestPropertyElement:
 
         assert prop.text == "Property"
 
+    def test_can_set_property_values(self):
+        item = _new_item()
+        properties = PropertyElement(item)
+        properties.add(tag="string", name="Name", text="Property")
+        prop = properties.get("Name")
+
+        properties.set("Name", "Testing")
+
+        assert prop.text == "Testing"
+
 class TestInstanceElement:
     instance = InstanceElement("Folder")
     element = instance.element
@@ -127,3 +139,118 @@ class TestScriptElement:
             script = ScriptElement(script_class)
 
             assert script.element.get("class") == script_class
+
+class TestScriptCommentMatching:
+    def test_can_match_first_comment(self):
+        comment = dedent("""\
+            -- Name: SomeScript
+            -- ClassName: LocalScript
+
+            print("Hello, World!")""")
+
+        expected_output = dedent("""\
+            -- Name: SomeScript
+            -- ClassName: LocalScript""")
+
+        script = ScriptElement(source=comment)
+        first_comment = script.get_first_comment()
+
+        assert first_comment == expected_output
+
+    def test_does_not_error_without_source(self):
+        script = ScriptElement() # No `source` argument
+        comment = script.get_first_comment()
+
+        assert comment is None
+
+    def test_does_not_error_without_first_comment(self):
+        source = dedent("""\
+            local function hello()
+                return "Hello, World!"
+            end
+
+            return hello""")
+
+        script = ScriptElement(source=source)
+        comment = script.get_first_comment()
+
+        assert comment is None
+
+    def test_does_not_match_block_comments(self):
+        """
+        Right now, comment matching is only done to inline comments for
+        simplicity. If a more sophisticated pattern is implemented to pick up
+        block comments, this test can be removed.
+        """
+
+        comment = dedent("""\
+            --[[
+              Hello, World!
+            --]]""")
+
+        script = ScriptElement(source=comment)
+        first_comment = script.get_first_comment()
+
+        assert first_comment is None
+
+class TestEmbeddedScriptProperties:
+    def test_can_get_embedded_properties(self):
+        source = dedent("""\
+            -- Name: HelloWorld
+            -- ClassName: LocalScript
+
+            print("Hello, World!")""")
+
+        script = ScriptElement(source=source)
+        properties = script.get_embedded_properties()
+
+        assert properties["Name"] == "HelloWorld"
+        assert properties["ClassName"] == "LocalScript"
+
+    def test_can_use_only_one_embedded_property(self):
+        source = "-- ClassName: LocalScript"
+
+        script = ScriptElement(source=source)
+        properties = script.get_embedded_properties()
+
+        assert properties["ClassName"] == "LocalScript"
+
+    def test_does_not_detect_regular_comments_as_embedded_properties(self):
+        source = "-- This is a comment"
+
+        script = ScriptElement(source=source)
+        properties = script.get_embedded_properties()
+
+        assert not properties
+
+    def test_is_overriding_with_embedded_properties(self):
+        source = dedent("""\
+            -- Name: HelloWorld
+            -- ClassName: LocalScript
+
+            print("Hello, World!")""")
+
+        script = ScriptElement(name="SampleScript", source=source)
+
+        assert script.name.text == "SampleScript"
+
+        script.use_embedded_properties()
+
+        assert script.name.text == "HelloWorld"
+
+    def test_can_attempt_to_override_without_embedded_properties(self):
+        source = dedent("""\
+            local function hello()
+                return "Hello, World!"
+            end
+
+            return hello""")
+
+        script = ScriptElement(source=source)
+        script.use_embedded_properties()
+
+    def test_fails_graceully_for_property_that_doesnt_exist(self):
+        source = "-- NonExistentProperty: true"
+
+        script = ScriptElement(source=source)
+        script.use_embedded_properties()
