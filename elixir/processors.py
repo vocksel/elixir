@@ -31,6 +31,12 @@ class BaseProcessor:
 
         return rbxmx.ModelElement(content)
 
+    def _get_script_class(self, content):
+        if rbxmx.is_module(content):
+            return "ModuleScript"
+        else:
+            return "Script"
+
     def process_script(self, name, content):
         """Processing for Lua files in the source directory.
 
@@ -40,11 +46,8 @@ class BaseProcessor:
             The Lua source code.
         """
 
-        if rbxmx.is_module(content):
-            return rbxmx.ScriptElement("ModuleScript", name=name,
-                source=content)
-        else:
-            return rbxmx.ScriptElement(name=name, source=content)
+        class_name = self._get_script_class(content)
+        return rbxmx.ScriptElement(class_name, name=name, source=content)
 
 class NevermoreProcessor(BaseProcessor):
     """Processor for NevermoreEngine (Legacy).
