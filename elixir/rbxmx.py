@@ -13,7 +13,7 @@ def _is_lua_comment(line):
     # Matching spaces so that we don't pick up block comments (--[[ ]])
     return re.match(r"^--\s+", line)
 
-def convert_bool(b):
+def _convert_bool(b):
     """Converts Python bool values to Lua's.
 
     Before we can insert a bool value in the XML, it must first be converted to
@@ -21,14 +21,14 @@ def convert_bool(b):
     """
     return str(b).lower()
 
-def sanitize(content):
+def _sanitize(content):
     """Makes sure `content` is safe to go in the XML.
 
     This is mostly for converting Python types into something XML compatible.
     """
 
     if type(content) == bool:
-        return convert_bool(content)
+        return _convert_bool(content)
     else:
         return content
 
@@ -89,7 +89,7 @@ class PropertyElement:
         """
 
         prop = ElementTree.SubElement(self.element, tag, name=name)
-        prop.text = sanitize(text)
+        prop.text = _sanitize(text)
 
         return prop
 

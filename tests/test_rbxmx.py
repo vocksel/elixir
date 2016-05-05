@@ -31,20 +31,20 @@ class TestBoolConversion:
     # I know the name sounds silly, but the function is used for putting bool
     # values into the XML, so it has to convert them into strings.
     def test_bool_is_string(self):
-        assert type(convert_bool(True)) is str
+        assert type(_convert_bool(True)) is str
 
     def test_bool_is_lowecased(self):
-        assert convert_bool(True).islower() == True
+        assert _convert_bool(True).islower() == True
 
 class TestSanitization:
     def test_is_converting_bools(self):
-        assert type(sanitize(True)) is str
+        assert type(_sanitize(True)) is str
 
     def test_is_returning_same_content_if_not_sanitize(self):
         # As of writing this, strings do not get sanitized in any way. If this
         # changes in the future this test will fail.
         content = "Hello, World!"
-        sanitized_content = sanitize(content)
+        sanitized_content = _sanitize(content)
 
         assert content == sanitized_content
 
