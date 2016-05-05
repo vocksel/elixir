@@ -150,10 +150,6 @@ class ScriptElement(InstanceElement):
         found_first_comment = False
         comment_lines = []
 
-        # NOTE: This way of searching for comments does not work when dealing
-        # with a source file with no newlines (eg "-- ClassName: LocalScript").
-        # While this is extremely unlikely to ever happen, we should still
-        # account for it.
         for line in source.splitlines():
             is_comment = _is_lua_comment(line)
             if is_comment:

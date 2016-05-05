@@ -7,7 +7,7 @@ class BaseProcessor:
 
     A processor is what compilers use to determine what happens when they
     encounter a file or folder. All of the `process` methods return a new
-    instance from `elixir.rbx`.
+    instance from `elixir.rbxmx`.
 
     For example, when processing a file, we return a new Script. The XML of
     these instances is then appended into the hierarchy when compiling.
