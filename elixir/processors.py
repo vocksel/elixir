@@ -47,7 +47,11 @@ class BaseProcessor:
         """
 
         class_name = self._get_script_class(content)
-        return rbxmx.ScriptElement(class_name, name=name, source=content)
+
+        script = rbxmx.ScriptElement(class_name, name=name, source=content)
+        script.use_embedded_properties()
+
+        return script
 
 class NevermoreProcessor(BaseProcessor):
     """Processor for NevermoreEngine (Legacy).
