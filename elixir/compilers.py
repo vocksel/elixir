@@ -12,8 +12,8 @@ def create_path(path):
 
 class BaseCompiler:
     def __init__(self, source, dest):
-        self.source = source
-        self.dest = dest
+        self.source = os.path.normpath(source)
+        self.dest = os.path.normpath(dest)
 
     def compile(self):
         create_path(self.dest)
@@ -60,9 +60,6 @@ class ModelCompiler(BaseCompiler):
     """
 
     def __init__(self, source, dest, processor=BaseProcessor):
-        source = os.path.normpath(source)
-        dest = os.path.normpath(dest)
-
         super().__init__(source, dest)
 
         self.processor = processor()
