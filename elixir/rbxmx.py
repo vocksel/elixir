@@ -50,7 +50,7 @@ def get_base_tag():
     return ElementTree.Element("roblox", attrib={
         "xmlns:xmine": "http://www.w3.org/2005/05/xmlmime",
         "xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
-        "xsi": "http://www.roblox.com/roblox.xsd",
+        "xsi:noNamespaceSchemaLocation": "http://www.roblox.com/roblox.xsd",
         "version": "4" })
 
 def is_module(content):
