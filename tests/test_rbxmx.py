@@ -1,6 +1,7 @@
 from textwrap import dedent
+from xml.etree import ElementTree
 
-from elixir.rbxmx import *
+from elixir import rbxmx
 
 """Tests for ROBLOX-related XML generation."""
 
@@ -31,20 +32,20 @@ class TestBoolConversion:
     # I know the name sounds silly, but the function is used for putting bool
     # values into the XML, so it has to convert them into strings.
     def test_bool_is_string(self):
-        assert type(_convert_bool(True)) is str
+        assert type(rbxmx._convert_bool(True)) is str
 
     def test_bool_is_lowecased(self):
-        assert _convert_bool(True).islower() == True
+        assert rbxmx._convert_bool(True).islower() == True
 
 class TestSanitization:
     def test_is_converting_bools(self):
-        assert type(_sanitize(True)) is str
+        assert type(rbxmx._sanitize(True)) is str
 
     def test_is_returning_same_content_if_not_sanitize(self):
         # As of writing this, strings do not get sanitized in any way. If this
         # changes in the future this test will fail.
         content = "Hello, World!"
-        sanitized_content = _sanitize(content)
+        sanitized_content = rbxmx._sanitize(content)
 
         assert content == sanitized_content
 
@@ -53,26 +54,26 @@ class TestModuleRecognition:
 
     def test_matches_module_with_excess_newlines(self):
         content = self.content + "\n\n\n\n"
-        assert is_module(content)
+        assert rbxmx.is_module(content)
 
     def test_matches_function_as_return_value(self):
         content = "return setmetatable(module, mt)"
-        assert is_module(content)
+        assert rbxmx.is_module(content)
 
 class TestElementToStringConversion:
     def test_is_not_output_as_bytestring(self):
         item = _new_item()
-        assert tostring(item) is not bytes
+        assert rbxmx.tostring(item) is not bytes
 
     def test_is_converting_to_string_properly(self):
         item = _new_item()
         expected_xml = "<Item class=\"Folder\"></Item>"
-        assert tostring(item) == expected_xml
+        assert rbxmx.tostring(item) == expected_xml
 
 class TestPropertyElement:
     def test_can_add_properties(self):
         item = _new_item()
-        properties = PropertyElement(item)
+        properties = rbxmx.PropertyElement(item)
         properties.add(tag="string", name="Property", text="Value")
         prop = properties.element.find("*[@name='Property']")
 
@@ -80,7 +81,7 @@ class TestPropertyElement:
 
     def test_can_get_properties_by_name(self):
         item = _new_item()
-        properties = PropertyElement(item)
+        properties = rbxmx.PropertyElement(item)
         properties.add(tag="string", name="Name", text="Property")
 
         prop = properties.get("Name")
@@ -89,7 +90,7 @@ class TestPropertyElement:
 
     def test_can_set_property_values(self):
         item = _new_item()
-        properties = PropertyElement(item)
+        properties = rbxmx.PropertyElement(item)
         properties.add(tag="string", name="Name", text="Property")
         prop = properties.get("Name")
 
@@ -98,7 +99,7 @@ class TestPropertyElement:
         assert prop.text == "Testing"
 
 class TestInstanceElement:
-    instance = InstanceElement("Folder")
+    instance = rbxmx.InstanceElement("Folder")
     element = instance.element
 
     def test_has_class_name(self):
@@ -118,25 +119,26 @@ class TestInstanceElement:
 
 class TestScriptElement:
     def test_disabled_is_converted_properly(self):
-        script = ScriptElement("Script", disabled=True)
+        script = rbxmx.ScriptElement("Script", disabled=True)
         assert script.disabled.text == "true"
 
     def test_source_can_be_blank(self):
-        script = ScriptElement("Script", source=None)
+        script = rbxmx.ScriptElement("Script", source=None)
         expected_xml = "<ProtectedString name=\"Source\"></ProtectedString>"
 
-        assert tostring(script.source) == expected_xml
+        assert rbxmx.tostring(script.source) == expected_xml
 
     def test_can_have_source(self):
-        script = ScriptElement("Script", source="print(\"Hello, World!\")")
+        script = rbxmx.ScriptElement("Script",
+            source="print(\"Hello, World!\")")
         expected_xml = "<ProtectedString name=\"Source\">print(\"Hello, " \
             "World!\")</ProtectedString>"
 
-        assert tostring(script.source) == expected_xml
+        assert rbxmx.tostring(script.source) == expected_xml
 
     def test_can_have_varied_class_name(self):
         for script_class in [ "Script", "LocalScript", "ModuleScript" ]:
-            script = ScriptElement(script_class)
+            script = rbxmx.ScriptElement(script_class)
 
             assert script.element.get("class") == script_class
 
@@ -152,13 +154,13 @@ class TestScriptCommentMatching:
             -- Name: SomeScript
             -- ClassName: LocalScript""")
 
-        script = ScriptElement(source=comment)
+        script = rbxmx.ScriptElement(source=comment)
         first_comment = script.get_first_comment()
 
         assert first_comment == expected_output
 
     def test_does_not_error_without_source(self):
-        script = ScriptElement() # No `source` argument
+        script = rbxmx.ScriptElement() # No `source` argument
         comment = script.get_first_comment()
 
         assert comment is None
@@ -171,7 +173,7 @@ class TestScriptCommentMatching:
 
             return hello""")
 
-        script = ScriptElement(source=source)
+        script = rbxmx.ScriptElement(source=source)
         comment = script.get_first_comment()
 
         assert comment is None
@@ -188,7 +190,7 @@ class TestScriptCommentMatching:
               Hello, World!
             --]]""")
 
-        script = ScriptElement(source=comment)
+        script = rbxmx.ScriptElement(source=comment)
         first_comment = script.get_first_comment()
 
         assert first_comment is None
@@ -201,7 +203,7 @@ class TestEmbeddedScriptProperties:
 
             print("Hello, World!")""")
 
-        script = ScriptElement(source=source)
+        script = rbxmx.ScriptElement(source=source)
         properties = script.get_embedded_properties()
 
         assert properties["Name"] == "HelloWorld"
@@ -210,7 +212,7 @@ class TestEmbeddedScriptProperties:
     def test_can_use_only_one_embedded_property(self):
         source = "-- ClassName: LocalScript"
 
-        script = ScriptElement(source=source)
+        script = rbxmx.ScriptElement(source=source)
         properties = script.get_embedded_properties()
 
         assert properties["ClassName"] == "LocalScript"
@@ -218,7 +220,7 @@ class TestEmbeddedScriptProperties:
     def test_does_not_detect_regular_comments_as_embedded_properties(self):
         source = "-- This is a comment"
 
-        script = ScriptElement(source=source)
+        script = rbxmx.ScriptElement(source=source)
         properties = script.get_embedded_properties()
 
         assert not properties
@@ -230,7 +232,7 @@ class TestEmbeddedScriptProperties:
 
             print("Hello, World!")""")
 
-        script = ScriptElement(name="SampleScript", source=source)
+        script = rbxmx.ScriptElement(name="SampleScript", source=source)
 
         assert script.name.text == "SampleScript"
 
@@ -246,11 +248,11 @@ class TestEmbeddedScriptProperties:
 
             return hello""")
 
-        script = ScriptElement(source=source)
+        script = rbxmx.ScriptElement(source=source)
         script.use_embedded_properties()
 
     def test_fails_graceully_for_property_that_doesnt_exist(self):
         source = "-- NonExistentProperty: true"
 
-        script = ScriptElement(source=source)
+        script = rbxmx.ScriptElement(source=source)
         script.use_embedded_properties()
