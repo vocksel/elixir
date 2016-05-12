@@ -41,6 +41,12 @@ def get_base_tag():
     This is what makes ROBLOX recognize the file as a Model that it can import.
     """
 
+    # `version` is currently the only attribute that's required for ROBLOX to
+    # recognize the file as a Model.
+    #
+    # All of the others are included to match what ROBLOX outputs when
+    # exporting a model to your computer.
+
     return ElementTree.Element("roblox", attrib={
         "xmlns:xmine": "http://www.w3.org/2005/05/xmlmime",
         "xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
