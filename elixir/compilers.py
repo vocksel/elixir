@@ -64,19 +64,6 @@ class ModelCompiler(BaseCompiler):
 
         self.processor = processor()
 
-    def _get_base_tag(self):
-        """Gets the base <roblox> tag that emcompasses the model.
-
-        This should always be the first element in the file. All others are
-        appended to this tag.
-        """
-
-        return ElementTree.Element("roblox", attrib={
-            "xmlns:xmine": "http://www.w3.org/2005/05/xmlmime",
-            "xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
-            "xsi": "http://www.roblox.com/roblox.xsd",
-            "version": "4" })
-
     def _get_element(self, path):
         """Returns a Python instance representing a ROBLOX instance.
 
@@ -119,7 +106,7 @@ class ModelCompiler(BaseCompiler):
             The path to a directory to recurse through.
         """
 
-        root_xml = self._get_base_tag()
+        root_xml = rbxmx.get_base_tag()
 
         def recurse(path, hierarchy):
             for item in os.listdir(path):

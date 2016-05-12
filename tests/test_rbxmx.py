@@ -60,6 +60,14 @@ class TestModuleRecognition:
         content = "return setmetatable(module, mt)"
         assert rbxmx.is_module(content)
 
+class TestBaseTag:
+    def test_has_necessary_attributes(self):
+        tag = rbxmx.get_base_tag()
+
+        # Current this is the only attribute that's required for ROBLOX to
+        # recognize the file as a Model.
+        assert tag.get("version")
+
 class TestElementToStringConversion:
     def test_is_not_output_as_bytestring(self):
         item = _new_item()

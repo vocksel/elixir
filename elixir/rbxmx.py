@@ -32,6 +32,21 @@ def _sanitize(content):
     else:
         return content
 
+def get_base_tag():
+    """Gets the root <roblox> tag.
+
+    This should always be the first Element in the file. All others are appended
+    to this tag.
+
+    This is what makes ROBLOX recognize the file as a Model that it can import.
+    """
+
+    return ElementTree.Element("roblox", attrib={
+        "xmlns:xmine": "http://www.w3.org/2005/05/xmlmime",
+        "xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
+        "xsi": "http://www.roblox.com/roblox.xsd",
+        "version": "4" })
+
 def is_module(content):
     """Checks if the contents are from a Lua module.
 
