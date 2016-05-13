@@ -87,7 +87,7 @@ class ModelCompiler(BaseCompiler):
                 item_path = os.path.join(path, item)
 
                 element = self.processor.get_element(item_path)
-                xml = element.element
+                xml = element.get_xml()
 
                 if isinstance(element, rbxmx.ModelElement):
                     self._import_model(hierarchy, xml)

@@ -146,6 +146,9 @@ class InstanceElement:
         self.properties = PropertyElement(self.element)
         self.name = self.properties.add("string", "Name", name)
 
+    def get_xml(self):
+        return self.element
+
 class ScriptElement(InstanceElement):
     def __init__(self, class_name="Script", name=None, source=None,
         disabled=False):

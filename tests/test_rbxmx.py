@@ -125,6 +125,10 @@ class TestInstanceElement:
         properties = self.element.find("Properties")
         assert properties
 
+    def test_getting_the_internal_element_reference(self):
+        element = self.instance.get_xml()
+        assert element == self.instance.element
+
 class TestScriptElement:
     def test_disabled_is_converted_properly(self):
         script = rbxmx.ScriptElement("Script", disabled=True)
