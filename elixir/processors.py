@@ -2,6 +2,11 @@ import os.path
 
 from elixir import rbxmx
 
+def _get_file_contents(path):
+    if os.path.isfile(path):
+        with open(path) as f:
+            return f.read()
+
 class BaseProcessor:
     """The primary processor class.
 
@@ -52,6 +57,26 @@ class BaseProcessor:
         script.use_embedded_properties()
 
         return script
+
+    def get_element(self, path):
+        """Returns a Python instance representing a ROBLOX instance.
+
+        path : str
+            The path to a folder or file to be processed.
+        """
+
+        name = os.path.basename(path)
+
+        if os.path.isdir(path):
+            return self.process_folder(name)
+        else:
+            name, ext = os.path.splitext(name)
+            content = _get_file_contents(path)
+
+            if ext == ".lua":
+                return self.process_script(name, content)
+            elif ext == ".rbxmx":
+                return self.process_model(content)
 
 class NevermoreProcessor(BaseProcessor):
     """Processor for NevermoreEngine (Legacy).

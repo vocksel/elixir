@@ -64,32 +64,6 @@ class ModelCompiler(BaseCompiler):
 
         self.processor = processor()
 
-    def _get_element(self, path):
-        """Returns a Python instance representing a ROBLOX instance.
-
-        This passes off the path to the compiler's processor. It will then
-        process the file/folder to give you an instance from the `rbx` module.
-
-        From there you use the returned instance's `get_xml` method to append
-        the instance into the model hierarchy.
-
-        path : str
-            The path to a folder or file to be processed by the engine.
-        """
-
-        name, extension = os.path.splitext(os.path.basename(path))
-
-        if os.path.isdir(path):
-            return self.processor.process_folder(name)
-        elif os.path.isfile(path):
-            with open(path) as f:
-                content = f.read()
-
-            if extension == ".lua":
-                return self.processor.process_script(name, content)
-            elif extension == ".rbxmx":
-                return self.processor.process_model(content)
-
     def _import_model(self, hierarchy, model_xml):
         # We need to use some special handling when we encounter a model. Models
         # have their own <roblox> tag which we need to skip when importing.
@@ -112,7 +86,7 @@ class ModelCompiler(BaseCompiler):
             for item in os.listdir(path):
                 item_path = os.path.join(path, item)
 
-                element = self._get_element(item_path)
+                element = self.processor.get_element(item_path)
                 xml = element.element
 
                 if isinstance(element, rbxmx.ModelElement):
