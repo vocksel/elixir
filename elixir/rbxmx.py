@@ -243,6 +243,6 @@ class ContainerElement(InstanceElement):
     def __init__(self, class_name="Folder", name=None):
         super().__init__(class_name, name)
 
-class ModelElement:
+class ModelElement(InstanceElement):
     def __init__(self, content):
         self.element = ElementTree.XML(content)
