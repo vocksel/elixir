@@ -129,6 +129,18 @@ class TestInstanceElement:
         element = self.instance.get_xml()
         assert element == self.instance.element
 
+    def test_appending_to_other_elements(self):
+        element = rbxmx.InstanceElement("Folder")
+        another_element = rbxmx.InstanceElement("Model")
+
+        xml = another_element.get_xml()
+
+        element.append_to(xml)
+
+        xml_was_appeneded = xml.find("Item")
+
+        assert xml_was_appeneded
+
 class TestScriptElement:
     def test_disabled_is_converted_properly(self):
         script = rbxmx.ScriptElement("Script", disabled=True)

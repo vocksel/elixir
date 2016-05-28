@@ -149,6 +149,19 @@ class InstanceElement:
     def get_xml(self):
         return self.element
 
+    def append_to(self, parent_element):
+        """Appends the Element's XML to another Element.
+
+        This is primarily used so that appending the XML of regular
+        InstanceElement's and ModelElement's can be done from the same method.
+
+        parent_element : Element
+            The Element to append to.
+        """
+
+        xml = self.get_xml()
+        parent_element.append(xml)
+
 class ScriptElement(InstanceElement):
     def __init__(self, class_name="Script", name=None, source=None,
         disabled=False):
@@ -246,3 +259,17 @@ class ContainerElement(InstanceElement):
 class ModelElement(InstanceElement):
     def __init__(self, content):
         self.element = ElementTree.XML(content)
+
+    def append_to(self, parent_element):
+        """Imports the Model's contents into another Element.
+
+        parent_element : Element
+            The Element to append to.
+        """
+
+        xml = self.get_xml()
+
+        # Because Models have their own <roblox> tag, when importing we have to
+        # skip over that and just use the inner Elements.
+        for element in list(xml):
+            parent_element.append(element)
