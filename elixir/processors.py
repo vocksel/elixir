@@ -19,10 +19,10 @@ class BaseProcessor:
     """
 
     def process_folder(self, name):
-        """Processing for folders in the source directory.
+        """Processing for folders.
 
         name : str
-            The name of the folder to process. Excluding the extension.
+            The name of the folder to process.
         """
 
         return rbxmx.ContainerElement(name=name)
@@ -37,13 +37,15 @@ class BaseProcessor:
         return rbxmx.ModelElement(content)
 
     def _get_script_class(self, content):
+        """Checks a file's content to determine the type of Lua Script it is."""
+
         if rbxmx.is_module(content):
             return "ModuleScript"
         else:
             return "Script"
 
     def process_script(self, name, content):
-        """Processing for Lua files in the source directory.
+        """Processing for Lua files.
 
         name : str
             The name of the Script.
@@ -60,6 +62,9 @@ class BaseProcessor:
 
     def get_element(self, path):
         """Returns a Python instance representing a ROBLOX instance.
+
+        This routes `path` to the most appropriate `process` method and returns
+        one of the classes from `rbxmx`.
 
         path : str
             The path to a folder or file to be processed.

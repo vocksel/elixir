@@ -1,10 +1,14 @@
 import re
 from xml.etree import ElementTree
 
-"""Functions for creating ROBLOX instances in XML"""
+"""Everything to do with generating ROBLOX instances as XML.
+
+This module is for constructing ROBLOX Models from a folder structure and Lua
+files, as well as importing existing Models when compiling.
+"""
 
 def _is_lua_comment(line):
-    """Checks if `line` is a Lua comment.
+    """Checks if a line of text is a Lua comment.
 
     line : str
         A line from some Lua source code.
@@ -16,8 +20,10 @@ def _is_lua_comment(line):
 def _convert_bool(b):
     """Converts Python bool values to Lua's.
 
-    Before we can insert a bool value in the XML, it must first be converted to
-    a string and then lowercased to match Lua's bool values.
+    For simplicity's sake, you can use Python's bool values for everything in
+    the codebase. Before it can go in the XML it has to be turned into a string,
+    and it must also be lowercased to match Lua's bool values, otherwise ROBLOX
+    won't recognize them.
     """
     return str(b).lower()
 
@@ -35,18 +41,14 @@ def _sanitize(content):
 def get_base_tag():
     """Gets the root <roblox> tag.
 
-    This should always be the first Element in the file. All others are appended
+    This is what makes ROBLOX recognize the file as a Model that it can import,
+    it should always be the first Element in the file. All others are appended
     to this tag.
-
-    This is what makes ROBLOX recognize the file as a Model that it can import.
     """
 
     # `version` is currently the only attribute that's required for ROBLOX to
-    # recognize the file as a Model.
-    #
-    # All of the others are included to match what ROBLOX outputs when
-    # exporting a model to your computer.
-
+    # recognize the file as a Model. All of the others are included to match
+    # what ROBLOX outputs when  exporting a model to your computer.
     return ElementTree.Element("roblox", attrib={
         "xmlns:xmine": "http://www.w3.org/2005/05/xmlmime",
         "xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
@@ -63,9 +65,11 @@ def is_module(content):
         The Lua source code to check.
     """
 
-    # We match any number of whitespace after the return in case of accidental
-    # spacing on the user's part. Then we match any characters to catch both
-    # variables (`return module`) and functions (`return setmetatable(t1, t2)`)
+    # We match any number of whitespace after the `return` in case of accidental
+    # spacing on the user's part.
+    #
+    # Then we match any characters to catch variables (`return module`) and
+    # functions (`return setmetatable(t1, t2)`)
     #
     # We're optionally matching any number of spaces at the end of the file
     # incase of a final newline, or accidentally added spaces after the value.
@@ -81,8 +85,9 @@ def tostring(element):
     are output with their ending tags. This is only required when _writing_ the
     XML, as ROBLOX won't import the file if there are any self-closing tags.
 
-    This isn't used for writing, so while this isn't mandatory, it's done here
-    so the string version of the XML is consistent with what gets written.
+    This function isn't used for writing, so while ending tags aren't mandatory,
+    they're used here so the string version of the XML is consistent with what
+    gets written.
     """
 
     return ElementTree.tostring(element, encoding="unicode",
@@ -107,6 +112,10 @@ class PropertyElement:
         name : str
             The property's name. For example, you would use a tag of "bool" and
             a name of "Disabled" for the Disabled property of a Script.
+        text : str|number|bool
+            The contents of the property. For a Name or Source this will be a
+            string, but you can also use Python's bool values with this, they
+            just get converted to Lua's bools.
         """
 
         prop = ElementTree.SubElement(self.element, tag, name=name)
@@ -115,9 +124,18 @@ class PropertyElement:
         return prop
 
     def get(self, name):
+        """Gets a property by its name.
+
+        name : str
+            The name of the property to search for. This would be "Name" for an
+            instance's name, "Source" for the Lua source code, etc.
+        """
+
         return self.element.find("*[@name='{}']".format(name))
 
     def set(self, name, newValue):
+        """Changes the contents of a property to a new value."""
+
         prop = self.get(name)
         if prop is not None:
             prop.text = newValue
