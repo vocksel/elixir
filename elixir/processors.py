@@ -7,6 +7,14 @@ def _get_file_contents(path):
         with open(path) as f:
             return f.read()
 
+def _get_script_class(content):
+    """Checks a file's content to determine the type of Lua Script it is."""
+
+    if rbxmx.is_module(content):
+        return "ModuleScript"
+    else:
+        return "Script"
+
 class BaseProcessor:
     """The primary processor class.
 
@@ -36,14 +44,6 @@ class BaseProcessor:
 
         return rbxmx.ModelElement(content)
 
-    def _get_script_class(self, content):
-        """Checks a file's content to determine the type of Lua Script it is."""
-
-        if rbxmx.is_module(content):
-            return "ModuleScript"
-        else:
-            return "Script"
-
     def process_script(self, name, content):
         """Processing for Lua files.
 
@@ -53,7 +53,7 @@ class BaseProcessor:
             The Lua source code.
         """
 
-        class_name = self._get_script_class(content)
+        class_name = _get_script_class(content)
 
         script = rbxmx.ScriptElement(class_name, name=name, source=content)
         script.use_embedded_properties()
