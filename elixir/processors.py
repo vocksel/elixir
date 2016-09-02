@@ -95,9 +95,16 @@ class NevermoreProcessor(BaseProcessor):
     """
 
     def process_script(self, name, content):
-        if name == "NevermoreEngineLoader":
-            return rbxmx.ScriptElement(name=name, source=content)
-        elif ".main" in name.lower():
-            return rbxmx.ScriptElement(name=name, source=content, disabled=True)
-        else:
-            return rbxmx.ScriptElement("ModuleScript", name=name, source=content)
+        script = super().process_script(name, content)
+
+        # This is the name of the Script that loads Nevermore. It sets the
+        # Disabled property to `false` for Scripts that it determines should
+        # run. All Scripts need to be disabled by default for this handling.
+        is_engine_loader = name == "NevermoreEngineLoader"
+
+        is_module = script.element.attrib.get("class") == "ModuleScript"
+
+        if not is_engine_loader and not is_module:
+            script.disabled.text = "true"
+
+        return script
