@@ -133,12 +133,12 @@ class PropertyElement:
 
         return self.element.find("*[@name='{}']".format(name))
 
-    def set(self, name, newValue):
+    def set(self, name, new_value):
         """Changes the contents of a property to a new value."""
 
         prop = self.get(name)
         if prop is not None:
-            prop.text = newValue
+            prop.text = new_value
 
 class InstanceElement:
     """Acts as an XML implementation of ROBLOX's Instance class.
