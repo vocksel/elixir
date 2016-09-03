@@ -75,6 +75,14 @@ def is_module(content):
     # incase of a final newline, or accidentally added spaces after the value.
     return re.search(r"return\s+.*(\s+)?$", content)
 
+def get_script_type(content):
+    """Checks a file's content to determine the type of Lua Script it is."""
+
+    if is_module(content):
+        return "ModuleScript"
+    else:
+        return "Script"
+
 def tostring(element):
     """A more specialized version of ElementTree's `tostring`.
 

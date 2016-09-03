@@ -1,5 +1,3 @@
-from textwrap import dedent
-
 from elixir import processors
 
 class TestGettingFileContents:
@@ -16,21 +14,6 @@ class TestGettingFileContents:
         content = processors._get_file_contents(fake_path)
 
         assert content is None
-
-class TestBaseProcessor:
-    processor = processors.BaseProcessor()
-
-    def test_processor_is_detecting_modules(self):
-        content = dedent("""\
-            local function hello()
-                return "Hello, World!"
-            end
-
-            return hello""")
-
-        class_name = processors._get_script_class(content)
-
-        assert class_name == "ModuleScript"
 
 class TestNevermoreProcessor:
     processor = processors.NevermoreProcessor()

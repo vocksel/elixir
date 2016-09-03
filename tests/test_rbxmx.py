@@ -60,6 +60,17 @@ class TestModuleRecognition:
         content = "return setmetatable(module, mt)"
         assert rbxmx.is_module(content)
 
+class TestGettingTheTypeOfScript:
+    def test_recognizes_modules(self):
+        content = dedent("""\
+            local function hello()
+                return "Hello, World!"
+            end
+
+            return hello""")
+
+        assert rbxmx.get_script_class(content) == "ModuleScript"
+
 class TestBaseTag:
     def test_has_necessary_attributes(self):
         tag = rbxmx.get_base_tag()
