@@ -73,7 +73,7 @@ class TestGettingTheTypeOfScript:
 
 class TestBaseTag:
     def test_has_necessary_attributes(self):
-        tag = rbxmx.get_base_tag()
+        tag = rbxmx.get_roblox_tag()
 
         # Currently this is the only attribute that's required for ROBLOX to
         # recognize the file as a Model.

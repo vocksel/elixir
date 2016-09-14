@@ -71,7 +71,7 @@ class ModelCompiler(BaseCompiler):
             The path to a directory to recurse through.
         """
 
-        root_xml = rbxmx.get_base_tag()
+        root_xml = rbxmx.get_roblox_tag()
 
         def recurse(path, hierarchy):
             for item in os.listdir(path):

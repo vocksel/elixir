@@ -38,7 +38,7 @@ def _sanitize(content):
     else:
         return content
 
-def get_base_tag():
+def get_roblox_tag():
     """Gets the root <roblox> tag.
 
     This is what makes ROBLOX recognize the file as a Model that it can import,
