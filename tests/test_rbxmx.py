@@ -75,7 +75,7 @@ class TestBaseTag:
     def test_has_necessary_attributes(self):
         tag = rbxmx.get_base_tag()
 
-        # Current this is the only attribute that's required for ROBLOX to
+        # Currently this is the only attribute that's required for ROBLOX to
         # recognize the file as a Model.
         assert tag.get("version")
 
