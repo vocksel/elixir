@@ -32,6 +32,8 @@ def get_processor(processor_name):
 
     if processor_name in dir(elixir.processors):
         return getattr(elixir.processors, processor_name)
+    else:
+        return elixir.processors.BaseProcessor
 
 def main():
     args = docopt(__doc__)
