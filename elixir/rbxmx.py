@@ -21,16 +21,19 @@ def _convert_bool(b):
     """Converts Python bool values to Lua's.
 
     For simplicity's sake, you can use Python's bool values for everything in
-    the codebase. Before it can go in the XML it has to be turned into a string,
-    and it must also be lowercased to match Lua's bool values, otherwise ROBLOX
-    won't recognize them.
+    the codebase.
+
+    Before it can go in the XML it has to be turned into a string, and it must
+    also be lowercased to match Lua's bool values, otherwise ROBLOX won't
+    recognize them.
     """
     return str(b).lower()
 
 def _sanitize(content):
     """Makes sure `content` is safe to go in the XML.
 
-    This is mostly for converting Python types into something XML compatible.
+    This is mostly for converting Python types into something compatible with
+    ROBLOX's XML.
     """
 
     if type(content) == bool:
@@ -42,8 +45,9 @@ def get_roblox_tag():
     """Gets the root <roblox> tag.
 
     This is what makes ROBLOX recognize the file as a Model that it can import,
-    it should always be the first Element in the file. All others are appended
-    to this tag.
+    it should always be the first Element in the file.
+
+    All other elements are appended to this tag.
     """
 
     # `version` is currently the only attribute that's required for ROBLOX to

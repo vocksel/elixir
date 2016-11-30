@@ -5,6 +5,7 @@ from elixir import rbxmx
 
 """Tests for ROBLOX-related XML generation."""
 
+# Some sample source code to test with.
 SCRIPT_SOURCE = """\
 -- Name: Hello
 -- ClassName: ModuleScript
@@ -23,7 +24,7 @@ def _new_item(class_name=None):
     """Helper function for creating new `Item` Elements.
 
     This is used until we get to InstanceElement, where we then use that class
-    for all of the elements instead instead.
+    for all of the elements instead.
     """
     class_name = class_name or "Folder"
     return ElementTree.Element("Item", attrib={ "class": class_name })
