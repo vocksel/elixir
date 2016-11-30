@@ -279,6 +279,18 @@ class ScriptElement(InstanceElement):
                 self.properties.set(prop_name, prop_value)
 
 class ContainerElement(InstanceElement):
+    """A container for other InstanceElements.
+
+    This acts as a directory in-game. Other elements are parented to this one to
+    construct the hierarchy.
+
+    class_name="Folder" : str
+        This can be any ROBLOX class.
+        http://wiki.roblox.com/index.php?title=API:Class_reference
+    name=None : str
+        The name of the instance in-game. This will default to `class_name`.
+    """
+
     def __init__(self, class_name="Folder", name=None):
         super().__init__(class_name, name)
 
