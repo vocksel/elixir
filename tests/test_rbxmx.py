@@ -67,8 +67,7 @@ class TestModuleRecognition:
         content = "return setmetatable(module, mt)"
         assert rbxmx.is_module(content)
 
-class TestGettingTheTypeOfScript:
-    def test_recognizes_modules(self):
+    def test_matches_source_code(self):
         content = dedent("""\
             local function hello()
                 return "Hello, World!"
@@ -76,7 +75,7 @@ class TestGettingTheTypeOfScript:
 
             return hello""")
 
-        assert rbxmx.get_script_class(content) == "ModuleScript"
+        assert rbxmx.get_script_type(content) == "ModuleScript"
 
 class TestBaseTag:
     def test_has_necessary_attributes(self):
