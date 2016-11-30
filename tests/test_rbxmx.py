@@ -36,7 +36,13 @@ class TestBoolConversion:
         assert type(rbxmx._convert_bool(True)) is str
 
     def test_bool_is_lowecased(self):
-        assert rbxmx._convert_bool(True).islower() == True
+        assert rbxmx._convert_bool(True).islower()
+
+    def test_bool_is_true(self):
+        assert rbxmx._convert_bool(True) == "true"
+
+    def test_bool_is_false(self):
+        assert rbxmx._convert_bool(False) == "false"
 
 class TestSanitization:
     def test_is_converting_bools(self):
